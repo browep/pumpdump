@@ -1,0 +1,20 @@
+<% title "Entry" %>
+
+<p>
+  <strong>Source:</strong>
+  <%=h @entry.source_id %>
+</p>
+<p>
+  <strong>Send At:</strong>
+  <%=h @entry.send_at %>
+</p>
+<p>
+  <strong>Symbol:</strong>
+  <%=h @entry.symbol %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_entry_path(@entry) %> |
+  <%= link_to "Destroy", @entry, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", entries_path %>
+</p>

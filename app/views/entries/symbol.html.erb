@@ -1,0 +1,73 @@
+<% title @symbol %>
+<div id="placeholder" style="width:600px;height:300px;"></div>
+
+<script language="javascript" type="text/javascript">
+$(function () {
+    var d1 = [];
+    for (var i = 0; i <= 10; i += 1)
+        d1.push([i, parseInt(Math.random() * 30)]);
+
+    var d2 = [];
+    for (var i = 0; i <= 10; i += 1)
+        d2.push([i+Math.random()/2, parseInt(Math.random() * 30)]);
+
+    var d3 = [];
+    for (var i = 0; i <= 10; i += 1)
+        d3.push([i+0.1, parseInt(Math.random() * 30)]);
+
+    var d4 = [];
+    for (var i = 0; i <= 10; i += 0.1){
+        d4.push([i+Math.random()/10, parseInt(Math.random() *20 + 100)]);
+    }
+
+    var stack = null, bars = true, lines = false, steps = false;
+
+    function plotWithOptions() {
+        var barWidth = 0.1;
+        $.plot($("#placeholder"), [
+//        {
+//
+//            data: d2,
+//            bars: { show: true, barWidth: barWidth }
+//
+//        }
+//        ,{
+//
+//            data: d1,
+//            bars: { show: true, barWidth: barWidth }
+//
+//        }
+       {
+
+            data: <%= @prices_json %>,
+            lines: { show: true }  ,
+            yaxis: 2  ,
+
+
+        }
+        ],{
+            y2axis: { tickFormatter: function (v, axis) { return "$" + v.toFixed(axis.tickDecimals)  }},
+            xaxis: { mode: 'time' },
+            
+
+        }
+                );
+
+
+    }
+
+    plotWithOptions();
+
+//    $(".stackControls input").click(function (e) {
+//        e.preventDefault();
+//        stack = $(this).val() == "With stacking" ? true : null;
+//        plotWithOptions();
+//    });
+//    $(".graphControls input").click(function (e) {
+//        e.preventDefault();
+//        bars = $(this).val().indexOf("Bars") != -1;
+//        lines = $(this).val().indexOf("Lines") != -1;
+//        steps = $(this).val().indexOf("steps") != -1;
+//        plotWithOptions();
+//    });
+});</script>

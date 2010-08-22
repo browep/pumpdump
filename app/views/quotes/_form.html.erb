@@ -1,0 +1,20 @@
+<% form_for @quote do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :symbol %><br />
+    <%= f.text_field :symbol %>
+  </p>
+  <p>
+    <%= f.label :exchange %><br />
+    <%= f.text_field :exchange %>
+  </p>
+  <p>
+    <%= f.label :market_time %><br />
+    <%= f.datetime_select :market_time %>
+  </p>
+  <p>
+    <%= f.label :last_price %><br />
+    <%= f.text_field :last_price %>
+  </p>
+  <p><%= f.submit %></p>
+<% end %>

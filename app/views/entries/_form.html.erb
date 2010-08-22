@@ -1,0 +1,16 @@
+<% form_for @entry do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :source_id %><br />
+    <%= f.text_field :source_id %>
+  </p>
+  <p>
+    <%= f.label :send_at %><br />
+    <%= f.datetime_select :send_at %>
+  </p>
+  <p>
+    <%= f.label :symbol %><br />
+    <%= f.text_field :symbol %>
+  </p>
+  <p><%= f.submit %></p>
+<% end %>

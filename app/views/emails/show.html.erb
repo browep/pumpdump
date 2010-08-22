@@ -1,0 +1,12 @@
+<% title "Email" %>
+
+<p>
+  <strong>Name:</strong>
+  <%=h @email.name %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_email_path(@email) %> |
+  <%= link_to "Destroy", @email, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", emails_path %>
+</p>

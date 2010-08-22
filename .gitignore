@@ -1,0 +1,13 @@
+.idea
+.idea/**/*
+tmp
+tmp/**/*
+log/*.log
+log/*.pid
+log/*.output
+log/mailings_workers__send_mailing
+public/system
+public/images/profiles/**/*
+public/images/profiles
+config/database.yaml
+config/app_config.yaml

@@ -1,0 +1,23 @@
+<% title "Quotes" %>
+
+<table>
+  <tr>
+    <th>Symbol</th>
+    <th>Exchange</th>
+    <th>Market Time</th>
+    <th>Last Price</th>
+  </tr>
+  <% for quote in @quotes %>
+    <tr>
+      <td><%=h quote.symbol %></td>
+      <td><%=h quote.exchange %></td>
+      <td><%=h quote.market_time %></td>
+      <td><%=h quote.last_price %></td>
+      <td><%= link_to "Show", quote %></td>
+      <td><%= link_to "Edit", edit_quote_path(quote) %></td>
+      <td><%= link_to "Destroy", quote, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Quote", new_quote_path %></p>
