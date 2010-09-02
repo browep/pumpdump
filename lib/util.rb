@@ -52,7 +52,7 @@ module Util
   end
 
   def get_symbol_from_tweet(text)
-    matches = text.scan(/[\:\s\(\$]([A-Z]{4,5})[\.\)\s]/)
+    matches = text.scan(/[\:\s\(\$\*]([A-Z]{3,5})[\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
       return matches[0][0]
     end
@@ -83,6 +83,10 @@ module Util
     puts "minute: #{datetime.min()}"
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 
+  end
+
+  def ignore_symbols
+    ["ONE","BIG","NOW","OTC","GET","TOP"]
   end
 
 end

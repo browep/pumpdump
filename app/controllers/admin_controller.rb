@@ -10,7 +10,7 @@ class AdminController < ApplicationController
     structure = Structure.new
 
     @entry_count = 0
-    
+
     for source in sources
       if !source.twitter.nil?
         twitter_name = source.twitter
@@ -42,12 +42,12 @@ class AdminController < ApplicationController
             end
           end
         end
-        
+
       end
     end
 
     structure.sort
-    
+
     structure.debug_print
   end
 
