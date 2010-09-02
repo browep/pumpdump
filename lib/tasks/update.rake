@@ -6,44 +6,51 @@ require 'open-uri'
 
 namespace :update do
   task :quote => :environment do
-    # get all the symbols for the past 7 days
-    last_seven_days_entries = Entry.find(:all,:order=>"sent_at",:conditions=>
-      ["sent_at > ?",DateTime.now - 7])
+    include Util
+    if during_trading_time?(DateTime.now) || APP_CONFIG[:observe_market_time] == false
+      # get all the symbols for the past 7 days
+      last_seven_days_entries = Entry.find(:all, :order=>"sent_at", :conditions=>
+              ["sent_at > ?", DateTime.now - 7])
 
-    symbols = Set.new
-    for entry in last_seven_days_entries
-      symbols.add(entry.symbol)
-    end
-
-    puts "symbols: #{symbols.to_yaml}"
-
-    # go over each symbol, try and get a quote
-    symbols_added = []
-    not_symbols_added = []
-    for symbol in symbols
-      begin
-        url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
-        body = fetch(url).body
-        body = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
-
-        result = JSON.parse(body)
-        price = result["l"]
-
-        quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
-        if quote.save
-
-          symbols_added.push(symbol)
-        end
-
-
-      rescue => e
-        not_symbols_added.push(symbol)
-        puts e.inspect
+      symbols = Set.new
+      for entry in last_seven_days_entries
+        symbols.add(entry.symbol)
       end
+
+      puts "symbols: #{symbols.to_yaml}"
+
+      # go over each symbol, try and get a quote
+      symbols_added = []
+      not_symbols_added = []
+      for symbol in symbols
+        begin
+          url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
+          body = fetch(url).body
+          body = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
+
+          result = JSON.parse(body)
+          price = result["l"]
+
+          quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
+          if quote.save
+
+            symbols_added.push(symbol)
+          end
+
+
+        rescue => e
+          not_symbols_added.push(symbol)
+          puts e.inspect
+        end
+      end
+
+      puts "#{DateTime.now.to_s}: added #{symbols_added.size} quotes: #{symbols_added.join(", ")}"
+      puts "not added: #{not_symbols_added.join(", ")}" unless not_symbols_added.size == 0
+    else
+      puts "#{DateTime.now.to_s} not during trading hours."
+
     end
 
-    puts "#{DateTime.now.to_s}: added #{symbols_added.size} quotes: #{symbols_added.join(", ")}"
-    puts "not added: #{not_symbols_added.join(", ")}" unless not_symbols_added.size == 0
   end
 
   def fetch(uri_str, limit = 10)
@@ -88,9 +95,9 @@ namespace :update do
 
             symbol = get_symbol_from_tweet rss_entry.description
             puts rss_entry.description
-            if !symbol.nil? && !ignore_symbols().include?(symbol) 
+            if !symbol.nil? && !ignore_symbols().include?(symbol)
               puts "symbol: #{symbol}"
-              
+
               # we found a symbol, add it to the array
               # get the date from rss
               entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid)

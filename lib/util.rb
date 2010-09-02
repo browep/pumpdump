@@ -24,6 +24,13 @@ module Util
 
   end
 
+  def during_market_hours?(datetime)
+    if (datetime.day() <= 5 && (datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30) && datetime.hour() < 16) )
+      return true
+    end
+    false
+  end
+
   def next_closest_market_open(datetime)
 
     puts "Passed in time:\t\t #{datetime.to_s}"
@@ -79,14 +86,14 @@ module Util
   end
 
   def during_trading_time?( datetime)
-    puts "hour: #{datetime.hour()}"
-    puts "minute: #{datetime.min()}"
+#    puts "hour: #{datetime.hour()}"
+#    puts "minute: #{datetime.min()}"
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP"]
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY"]
   end
 
 end
