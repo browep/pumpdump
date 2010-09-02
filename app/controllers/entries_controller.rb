@@ -69,17 +69,43 @@ class EntriesController < ApplicationController
     @symbol = params[:id]
     logger.debug "the symbol #{@symbol}"
     # get all the entries for this
-    entries = Entry.find_by_symbol(:order=>"sent_at")
 
     prices = Quote.find_all_by_symbol(@symbol,:order=>"market_time")
 
     prices_arr = Array.new
+    @min_price = nil
     for price in prices
       prices_arr.push([price.market_time.to_i * 1000, price.last_price])
+      if @min_price.nil? || @min_price > price.last_price
+        @min_price = price.last_price
+      end
+    end
+
+    if @min_price.nil?
+      @min_price = 0
+    else
+      @min_price = @min_price * 0.98
     end
 
     @prices_json = prices_arr.to_json
     logger.debug "prices_json:#{@prices_json.to_s}"
+
+    # get all the entries
+    entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
+      ["sent_at > ?",DateTime.now - 7])
+
+    entries_arr = []
+    for entry in entries
+      entries_arr.push([entry.sent_at.to_i * 1000,entry.source.weight])
+    end
+    @entries_json = entries_arr.to_json
+
+    logger.debug "entries json #{@entries_json}"
+
+
+
+
+
 
   end
 end

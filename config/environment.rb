@@ -7,6 +7,13 @@ RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
+
+  raw_config = File.read("/usr/local/pumpdump/conf/app_config.yml")
+  APP_CONFIG = YAML.load(raw_config)[RAILS_ENV]
+
+  APP_CONFIG.each_pair do |k, v|
+    APP_CONFIG[k.to_sym] = v
+  end
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -38,4 +45,7 @@ Rails::Initializer.run do |config|
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
+
+  config.database_configuration_file= "/usr/local/pumpdump/conf/database.yml"
+
 end

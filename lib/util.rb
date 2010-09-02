@@ -78,4 +78,11 @@ module Util
 
   end
 
+  def during_trading_time?( datetime)
+    puts "hour: #{datetime.hour()}"
+    puts "minute: #{datetime.min()}"
+    datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
+
+  end
+
 end

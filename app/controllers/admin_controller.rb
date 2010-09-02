@@ -8,6 +8,8 @@ class AdminController < ApplicationController
     logger.debug "Number of sources: #{sources.length}"
 
     structure = Structure.new
+
+    @entry_count = 0
     
     for source in sources
       if !source.twitter.nil?
@@ -19,7 +21,6 @@ class AdminController < ApplicationController
         rss_url = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=#{twitter_name}"
         logger.debug "Rss Url : #{rss_url}"
         rss = SimpleRSS.parse open(rss_url)
-
 
         for rss_entry in rss.entries
           # check to see if we already have this one
@@ -34,6 +35,7 @@ class AdminController < ApplicationController
               entry = Entry.new(:message_type=>type_twitter(),:symbol=>symbol,:sent_at=>rss_entry.pubDate,:url=>rss_entry.link,:guid=>rss_entry.guid)
               entry.source = source
               if entry.save
+                @entry_count += 1
                 logger.debug "Saved: #{entry.to_yaml.to_s}"
               end
 
@@ -55,5 +57,28 @@ class AdminController < ApplicationController
     days_ago( DateTime.now - 1)
 
     next_closest_market_open(DateTime.now)
+  end
+
+  def fake_data
+    @symbol = params[:symbol]
+    price = 25
+
+    now = DateTime.now
+    datetime = now -7
+
+    @quotes = 0
+
+    while datetime < now
+      datetime = datetime.advance(:minutes => 2)
+      if during_trading_time?(datetime)
+        price += Float(rand(40))/100
+        quote = Quote.new(:market_time=>datetime,:last_price=>price,:symbol=>@symbol)
+        if quote.save
+          @quotes += 1
+        end
+      end
+    end
+
+
   end
 end
