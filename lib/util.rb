@@ -86,14 +86,15 @@ module Util
   end
 
   def during_trading_time?( datetime)
-#    puts "hour: #{datetime.hour()}"
-#    puts "minute: #{datetime.min()}"
+    puts "hour: #{datetime.hour()}"
+    puts "minute: #{datetime.min()}"
+    puts "zone: #{datetime.zone()}" 
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY"]
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE"]
   end
 
 end
