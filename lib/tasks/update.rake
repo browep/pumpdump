@@ -7,7 +7,7 @@ require 'open-uri'
 namespace :update do
   task :quote => :environment do
     include Util
-    if during_trading_time?(DateTime.now) || APP_CONFIG[:observe_market_time] == false
+    if during_trading_time?(DateTime.now().in_time_zone('Eastern Time (US & Canada)')) || APP_CONFIG[:observe_market_time] == false
       # get all the symbols for the past 7 days
       last_seven_days_entries = Entry.find(:all, :order=>"sent_at", :conditions=>
               ["sent_at > ?", DateTime.now - 7])
