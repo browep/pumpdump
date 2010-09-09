@@ -1,27 +1,41 @@
 class EntriesController < ApplicationController
   def index
-    @javascript_includes = ["http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js","highcharts"]
+#    @javascript_includes = ["http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js","highcharts"]
+#
+#    # create the date buckets, just make them 0 - 7
+#    @day_buckets =
+#
+#    @sources = Source.all
+#
+#    for source in @sources
+#      #create a new series for each source
+#      series = []
+#      entries_per_source = Entry.find(:all,:conditions=>{:source_id=>source.id})
+#
+#      for entry in entries_per_source
+#
+#
+#
+#      end
+#
+#    end
+#
+#    @days = (0..12).to_json
+#    logger.debug @days
 
-    # create the date buckets, just make them 0 - 7
-    @day_buckets = 
+#    @symbols = symbols_in_play()
 
-    @sources = Source.all
+    entries = Entry.find_last_seven_days()
+    @symbols = Hash.new
+    for entry in entries
 
-    for source in @sources
-      #create a new series for each source
-      series = []
-      entries_per_source = Entry.find(:all,:conditions=>{:source_id=>source.id})
-
-      for entry in entries_per_source
-
-        
-
+      if @symbols[entry.symbol].nil?
+        @symbols[entry.symbol] = 1
+      else
+        @symbols[entry.symbol] = @symbols[entry.symbol] + 1
       end
 
     end
-
-    @days = (0..12).to_json
-    logger.debug @days
   end
 
   
@@ -91,16 +105,19 @@ class EntriesController < ApplicationController
     logger.debug "prices_json:#{@prices_json.to_s}"
 
     # get all the entries
-    entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
+    @entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
       ["sent_at > ?",DateTime.now - 7])
 
     entries_arr = []
-    for entry in entries
+    for entry in @entries
       entries_arr.push([entry.sent_at.to_i * 1000,entry.source.weight])
     end
     @entries_json = entries_arr.to_json
 
     logger.debug "entries json #{@entries_json}"
+
+
+    
 
 
 

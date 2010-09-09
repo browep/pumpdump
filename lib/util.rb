@@ -97,4 +97,15 @@ module Util
     ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE"]
   end
 
+
+  def symbols_in_play
+    last_seven_days_entries = Entry.find_last_seven_days()
+
+    symbols = Set.new
+    for entry in last_seven_days_entries
+      symbols.add(entry.symbol)
+    end
+    symbols
+  end
+
 end

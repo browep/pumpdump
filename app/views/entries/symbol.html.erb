@@ -1,5 +1,20 @@
-<% title @symbol %>
+<h1 style="display:inline;"><%= @symbol %></h1>
+
+<a href="http://www.google.com/finance?q=<%= @symbol %>" target="_blank">on google finance</a>
+<br />
 <div id="placeholder" style="width:600px;height:300px;"></div>
+<div>Mentions in newsletters</div>
+<br />
+<br /><table>
+  <tr><td>Time Sent</td><td>Source</td><td>Impact Weight</td><td>View Message</td></tr>
+<% for entry in @entries %>
+    <tr>
+    <td><%= format_datetime(entry.sent_at) %>  </td>
+      <td><%= entry.source.name %></td>
+      <td><%= entry.source.weight %></td>
+      <td><%= link_to "view",entry.url %></td>
+    </tr>
+<% end %></table>
 
 <script language="javascript" type="text/javascript">
 $(function () {
@@ -28,7 +43,8 @@ $(function () {
                 },
                 min: <%= @min_price %>
             },
-            xaxis: { mode: 'time' }
+            xaxis: { mode: 'time' },
+            colors: ["#3366FF","#FF6633"]
         }
         );
 
