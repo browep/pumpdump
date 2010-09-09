@@ -1,0 +1,10 @@
+---
+group: paul
+address: 127.0.0.1
+log_file: log/mongrel.log
+port: "5000"
+cwd: /var/rails/pumpdump
+environment: production
+user: paul
+pid_file: /var/rails/pumpdump/tmp/mongrel.pid
+servers: 3
