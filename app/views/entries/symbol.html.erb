@@ -3,10 +3,11 @@
 <a href="http://www.google.com/finance?q=<%= @symbol %>" target="_blank">on google finance</a>
 <br />
 <div id="placeholder" style="width:600px;height:300px;"></div>
-<div>Mentions in newsletters</div>
 <br />
-<br /><table>
-  <tr><td>Time Sent</td><td>Source</td><td>Impact Weight</td><td>View Message</td></tr>
+<div class="sub-title">Mentions in newsletters</div>
+<br />
+<br /><table class="mentions-list">
+  <tr class="table-headers"><td>Time Sent</td><td>Source</td><td>Factor</td><td>View Message</td></tr>
 <% for entry in @entries %>
     <tr>
     <td><%= format_datetime(entry.sent_at) %>  </td>

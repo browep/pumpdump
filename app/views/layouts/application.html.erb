@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title><%= h(yield(:title) || "Untitled") %></title>
+    <title><%= h(@title || "Untitled")  %> | TheStockFactor.com</title>
     <%= stylesheet_link_tag 'application' %>
     <% if @javascript_includes %>
         <% for js_file in @javascript_includes %>

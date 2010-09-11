@@ -90,3 +90,26 @@ a {
 {
     padding-top: 5px;
 }
+
+.home-symbol
+{
+    font-size: 1.2em;
+
+}
+
+.mentions-list > tbody >tr > td
+{
+    padding-right: 10px;
+
+}
+
+.sub-title
+{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.table-headers >td
+{
+    border-bottom: gray 1px solid;
+}

@@ -94,7 +94,7 @@ module Util
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE"]
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC"]
   end
 
 
@@ -106,6 +106,10 @@ module Util
       symbols.add(entry.symbol)
     end
     symbols
+  end
+
+  def with_zone(datetime)
+    return datetime - (4/24.0)
   end
 
 end

@@ -1,41 +1,28 @@
 class EntriesController < ApplicationController
   def index
-#    @javascript_includes = ["http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js","highcharts"]
-#
-#    # create the date buckets, just make them 0 - 7
-#    @day_buckets =
-#
-#    @sources = Source.all
-#
-#    for source in @sources
-#      #create a new series for each source
-#      series = []
-#      entries_per_source = Entry.find(:all,:conditions=>{:source_id=>source.id})
-#
-#      for entry in entries_per_source
-#
-#
-#
-#      end
-#
-#    end
-#
-#    @days = (0..12).to_json
-#    logger.debug @days
 
-#    @symbols = symbols_in_play()
-
+    @title = "Stocks In Play"
     entries = Entry.find_last_seven_days()
     @symbols = Hash.new
     for entry in entries
 
       if @symbols[entry.symbol].nil?
-        @symbols[entry.symbol] = 1
+        hash = Hash.new
+        hash[:weight] = entry.source.weight
+        hash[:count] = 1
+        @symbols[entry.symbol] = hash
       else
-        @symbols[entry.symbol] = @symbols[entry.symbol] + 1
+        hash = @symbols[entry.symbol]
+        hash[:weight] = hash[:weight] + entry.source.weight
+        hash[:count] = hash[:count] + 1;
       end
 
     end
+
+    # sort by highest factor
+    @symbols = @symbols.sort { |a,b|
+      b[1][:weight] <=> a[1][:weight]
+    }
   end
 
   
@@ -81,7 +68,7 @@ class EntriesController < ApplicationController
   def symbol
     @javascript_includes = ["jquery","jquery.flot","jquery.flot.stack"]
     @symbol = params[:id]
-    logger.debug "the symbol #{@symbol}"
+    @title = @symbol
     # get all the entries for this
 
     prices = Quote.find_all_by_symbol(@symbol,:order=>"market_time")
@@ -89,7 +76,7 @@ class EntriesController < ApplicationController
     prices_arr = Array.new
     @min_price = nil
     for price in prices
-      prices_arr.push([price.market_time.to_i * 1000, price.last_price])
+      prices_arr.push([price.market_time_with_zone.to_f.to_i * 1000, price.last_price])
       if @min_price.nil? || @min_price > price.last_price
         @min_price = price.last_price
       end
@@ -110,7 +97,7 @@ class EntriesController < ApplicationController
 
     entries_arr = []
     for entry in @entries
-      entries_arr.push([entry.sent_at.to_i * 1000,entry.source.weight])
+      entries_arr.push([entry.sent_at_with_zone.to_f.to_i * 1000,entry.source.weight])
     end
     @entries_json = entries_arr.to_json
 

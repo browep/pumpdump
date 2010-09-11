@@ -1,5 +1,17 @@
-Symbols in play      <br />
-<% @symbols.each_pair do |symbol,count| %>
+<h1 style="text-align:center;">Symbols in Play</h1>
+<table>
+  <tr>
+    <td></td>
+    <td>Factor</td>
+    <td>Number of mentions</td>
+  </tr>
+  <% @symbols.each do |symbol| %>
 
-    <%= link_to "#{symbol} : #{count}", :action=>"symbol",:id=>symbol %><br />
-<% end %>
+      <tr>
+        <td style="padding-right: 10px;">
+          <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
+        <td><%= symbol[1][:weight] %></td>
+        <td><%= symbol[1][:count] %></td>
+      </tr>
+  <% end %>
+</table>
