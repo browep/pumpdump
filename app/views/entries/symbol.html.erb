@@ -13,7 +13,11 @@
     <td><%= format_datetime(entry.sent_at) %>  </td>
       <td><%= entry.source.name %></td>
       <td><%= entry.source.weight %></td>
-      <td><%= link_to "view",entry.url %></td>
+      <% if entry.message_type == type_twitter then %>
+          <td><%= link_to "view",entry.url %></td>
+      <% elsif entry.message_type == type_email %>
+          <td><%= link_to "view", :action=>"email",:id=>entry %></td>
+      <% end %>
     </tr>
 <% end %></table>
 

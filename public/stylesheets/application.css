@@ -113,3 +113,9 @@ a {
 {
     border-bottom: gray 1px solid;
 }
+.email-header
+{
+    font-weight: bold;
+    padding-bottom: 12px;
+    padding-top: 8px;
+}

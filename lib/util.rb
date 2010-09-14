@@ -58,7 +58,7 @@ module Util
 
   end
 
-  def get_symbol_from_tweet(text)
+  def get_symbol_from_text(text)
     matches = text.scan(/[\:\s\(\$\*]([A-Z]{3,5})[\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
       return matches[0][0]
@@ -70,6 +70,13 @@ module Util
     0
   end
 
+  def type_email
+    1
+  end
+
+  def strip_html(str)
+    str.gsub(/<\/?[^>]*>/, "")
+  end
 
   def seven_trading_days_back
 
@@ -94,7 +101,7 @@ module Util
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC"]
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","YOU"]
   end
 
 
@@ -109,7 +116,19 @@ module Util
   end
 
   def with_zone(datetime)
-    return datetime - (4/24.0)
+    return datetime - 14400
   end
+
+  def put_error(e)
+    if !logger.nil? && !logger.error.nil?
+      logger.error "Error: #{e.message}"
+      logger.error e.backtrace
+    end
+    puts "Error: #{e.message}"
+    puts e.backtrace
+  end
+
+
+
 
 end

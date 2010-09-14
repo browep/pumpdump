@@ -4,12 +4,14 @@
   <tr>
     <th>Name</th>
     <th>Address</th>
+    <th>Twitter</th>
     <th>Weight</th>
   </tr>
   <% for source in @sources %>
     <tr>
       <td><%=h source.name %></td>
       <td><%=h source.address %></td>
+      <td><%=h source.twitter %></td>
       <td><%=h source.weight %></td>
       <td><%= link_to "Show", source %></td>
       <td><%= link_to "Edit", edit_source_path(source) %></td>
