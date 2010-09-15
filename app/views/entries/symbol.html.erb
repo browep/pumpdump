@@ -10,7 +10,7 @@
   <tr class="table-headers"><td>Time Sent</td><td>Source</td><td>Factor</td><td>View Message</td></tr>
 <% for entry in @entries %>
     <tr>
-    <td><%= format_datetime(entry.sent_at) %>  </td>
+    <td><%= format_datetime(entry.sent_at_with_zone) %>  </td>
       <td><%= entry.source.name %></td>
       <td><%= entry.source.weight %></td>
       <% if entry.message_type == type_twitter then %>
