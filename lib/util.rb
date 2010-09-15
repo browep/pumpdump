@@ -120,9 +120,12 @@ module Util
   end
 
   def put_error(e)
-    if !logger.nil? && !logger.error.nil?
-      logger.error "Error: #{e.message}"
-      logger.error e.backtrace
+    begin
+      if !logger.nil? && !logger.error.nil?
+        logger.error "Error: #{e.message}"
+        logger.error e.backtrace
+      end
+    rescue => e
     end
     puts "Error: #{e.message}"
     puts e.backtrace

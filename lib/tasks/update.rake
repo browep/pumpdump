@@ -4,7 +4,6 @@ require 'simple-rss'
 require 'open-uri'
 
 require 'net/imap'
-require 'gmail'
 
 
 namespace :update do
