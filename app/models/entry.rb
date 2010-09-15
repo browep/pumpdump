@@ -5,7 +5,11 @@ class Entry < ActiveRecord::Base
 
   include Util
   def sent_at_with_zone
-    with_zone self.sent_at
+    if self.message_type == type_twitter
+      with_zone self.sent_at
+    else
+      self.sent_at
+    end
   end
 
   def self.find_last_seven_days
