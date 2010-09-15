@@ -129,7 +129,7 @@ module Update
                                   :sent_at=>email[:sent_at],
                                   :subject=>email[:subject],
                                   :body=>email[:body],
-                                  :guid=>"#{email[:from_address]}:#{email[:sent_at].to_i.to_s}"
+                                  :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}"
                 )
                 entry.source = source
                 if entry.save
