@@ -9,7 +9,7 @@ module Update
 
   include Util
 
-  def quote
+  def do_quote
     if during_trading_time?(DateTime.now().in_time_zone('Eastern Time (US & Canada)')) || APP_CONFIG[:observe_market_time] == false
       # get all the symbols for the past 7 days
       symbols = symbols_in_play()
@@ -65,54 +65,50 @@ module Update
     end
   end
 
-  def symbol
+  def do_symbol
     #    start with twitter
     sources = Source.all
     puts "Number of sources: #{sources.length}"
 
-    structure = Structure.new
-
     @entry_count = 0
-
-    # get all the new emails
-
-     # make a connection to imap account
-    email_username = APP_CONFIG[:email_username]
-    email_password = APP_CONFIG[:email_password]
-
-    gmail, emails = get_emails(email_username, email_password)
 
     for source in sources
       if !source.twitter.nil? && source.twitter.length > 1
-        twitter_name = source.twitter
-        if source.twitter.include?("http://twitter")
-          twitter_name = source.twitter.gsub("http:\/\/twitter.com\/", "")
-        end
+        begin
+          twitter_name = source.twitter
+          if source.twitter.include?("http://twitter")
+            twitter_name = source.twitter.gsub("http:\/\/twitter.com\/", "")
+          end
 
-        rss_url = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=#{twitter_name}"
-        puts "Rss Url : #{rss_url}"
-        rss = SimpleRSS.parse open(rss_url)
+          rss_url = "http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=#{twitter_name}"
+          puts "Rss Url : #{rss_url}"
+          rss = SimpleRSS.parse open(rss_url)
 
-        for rss_entry in rss.entries
-          # check to see if we already have this one
-          if Entry.find(:first, :conditions=>{:guid=>rss_entry.guid}).nil?
+          for rss_entry in rss.entries
+            # check to see if we already have this one
+            if Entry.find(:first, :conditions=>{:guid=>rss_entry.guid}).nil?
 
-            symbol = get_symbol_from_text rss_entry.description
-            if !symbol.nil? && !ignore_symbols().include?(symbol)
-              puts "symbol: #{symbol}"
+              symbol = get_symbol_from_text rss_entry.description
+              if !symbol.nil? && !ignore_symbols().include?(symbol)
+                puts "symbol: #{symbol}"
 
-              # we found a symbol, add it to the array
-              # get the date from rss
-              entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid)
-              entry.source = source
-              if entry.save
-                @entry_count += 1
+                # we found a symbol, add it to the array
+                # get the date from rss
+                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid)
+                entry.source = source
+                if entry.save
+                  @entry_count += 1
+                end
+
               end
-
             end
           end
+        rescue => e
+          puts e.message
         end
-      elsif !emails.nil? && !source.address.nil? && source.address.length > 2
+      elsif !source.address.nil? && source.address.length > 2
+
+        emails = get_emails source.address
 
         # check to see if a source is in any of the way unread emails
         emails.each do |email|
@@ -121,7 +117,7 @@ module Update
             symbol = get_symbol_from_text(strip_html(text))
             if !symbol.nil? && !ignore_symbols().include?(symbol)
               begin
-                puts "symbol: #{symbol}"
+                puts "symbol found for #{source.address}: #{symbol}"
                 # we found a symbol, add it to the array
                 # get the date from rss
                 entry = Entry.new(:message_type=>type_email(),
@@ -138,6 +134,8 @@ module Update
               rescue => e
                   put_error e
               end
+            else
+              "symbol not found for #{source.address}"
             end
           end
         end
@@ -145,13 +143,17 @@ module Update
       end
     end
 
-    structure.sort
+    puts "entries added = #{@entry_count}"
 
-    structure.debug_print
   end
 
 
-  def get_emails(username, password)
+  def get_emails(source_address)
+
+    puts "looking for emails from: #{source_address}"
+
+    username = APP_CONFIG[:email_username]
+    password = APP_CONFIG[:email_password]
 
     emails = []
 
@@ -163,7 +165,7 @@ module Update
 
     # retrieve all messages in the INBOX that
     # are not marked as DELETED (archived in Gmail-speak)
-    $imap.search(["NOT", "SEEN"]).each do |message_id|
+    $imap.search(["FROM",source_address,"NOT", "SEEN"]).each do |message_id|
       begin
         map = Hash.new
 
@@ -186,7 +188,6 @@ module Update
 
         emails << map
 
-        puts "added #{message_id}"
       rescue => e
         puts e.inspect
       end
@@ -198,22 +199,8 @@ module Update
 
     $imap.logout
 
-    return $imap, emails
-
-  end
-#  def get_emails(username, password)
-#    gmail = Gmail.new(username, password)
-#
-#    unread_emails = gmail.inbox.emails(:unread)
-#    puts "unread count: #{unread_emails.length}"
-#
-#    return gmail, unread_emails
-#  end
-
-
-  def finish( gmail, emails )
-
-    gmail.logout
+    puts "found #{emails.length} emails for #{source_address}"
+    return emails
 
   end
 
