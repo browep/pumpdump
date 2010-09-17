@@ -59,7 +59,7 @@ module Util
   end
 
   def get_symbol_from_text(text)
-    matches = text.scan(/[\:\s\(\$\*]([A-Z]{3,5})[\.\)\s!\*]/)
+    matches = ("$"+ text +" ").scan(/[:\s\(\$\*#]([A-Z]{3,5})[\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
       return matches[0][0]
     end
@@ -101,7 +101,8 @@ module Util
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","YOU","WAS","HUGE","HOT","DONT","MISS","THIS"]
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","YOU","WAS","HUGE",
+     "HOT","DONT","MISS","THIS","HOD"]
   end
 
 

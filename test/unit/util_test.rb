@@ -13,11 +13,21 @@ class UtilTester < Test::Unit::TestCase
   end
 
   def test_in_market_time
-    assert(during_trading_time?(DateTime.new(2010,9,23,9,31)))
-    assert(during_trading_time?(DateTime.new(2010,9,23,9,30)))
-    assert(!during_trading_time?(DateTime.new(2010,9,23,9,29)))
-    assert(!during_trading_time?(DateTime.new(2010,9,23,9,21)))
-    assert(!during_trading_time?(DateTime.new(2010,9,23,16,21)))
-    assert(!during_trading_time?(DateTime.new(2010,9,23,16,0)))
+#    assert(during_trading_time?(DateTime.new(2010,9,23,9,31)))
+#    assert(during_trading_time?(DateTime.new(2010,9,23,9,30)))
+#    assert(!during_trading_time?(DateTime.new(2010,9,23,9,29)))
+#    assert(!during_trading_time?(DateTime.new(2010,9,23,9,21)))
+#    assert(!during_trading_time?(DateTime.new(2010,9,23,16,21)))
+#    assert(!during_trading_time?(DateTime.new(2010,9,23,16,0)))
+    result = get_symbol_from_text("#HLNT is on a break out ,can only imagine when we recieve word on the dong feng deal -#EIGH is holding gains well -always get in the dips")
+    assert("HLNT" == result)
+    assert("RMDT" == get_symbol_from_text("Remember who called RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!"))
+    assert("RMDT" == get_symbol_from_text("Remember who called :RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!"))
+    assert("RMDT" == get_symbol_from_text("RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!"))
+    assert("RMDT" == get_symbol_from_text("$RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!"))
+    assert("TRDX" == get_symbol_from_text("Trend Exploration, Inc. (TRDX) Could Bounce Back!! http://f.ast.ly/ATMTX"))
+    assert("TRDX" == get_symbol_from_text("Trend Exploration, Inc. TRDX"))
   end
+
+
 end
