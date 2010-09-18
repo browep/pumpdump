@@ -1,17 +1,30 @@
-<h1 style="text-align:center;">Symbols in Play</h1>
-<table>
+<table width="100%">
   <tr>
-    <td></td>
-    <td>Factor</td>
-    <td>Number of mentions</td>
-  </tr>
-  <% @symbols.each do |symbol| %>
+    <td><h1 style="text-align:center;">Symbols in Play</h1>
+      <table>
+        <tr>
+          <td></td>
+          <td>Factor</td>
+          <td>Number of mentions</td>
+        </tr>
+        <% @symbols.each do |symbol| %>
 
-      <tr>
-        <td style="padding-right: 10px;">
-          <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
-        <td><%= symbol[1][:weight] %></td>
-        <td><%= symbol[1][:count] %></td>
-      </tr>
-  <% end %>
+            <tr class="front-list">
+              <td>
+                <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
+              <td><%= symbol[1][:weight] %></td>
+              <td><%= symbol[1][:count] %></td>
+            </tr>
+        <% end %>
+      </table>
+    </td>
+    <td valign="top">
+      <div style="float:right;max-width:360px;"><h1 style="text-align:center;">What is the stock factor?</h1>
+
+        Which newsletters get in before which the spike? Which ones are always too late? Each newsletter has a stock
+        factor: how often they are right about stocks. Click on a symbol to see when newsletters first sent out messages
+        about them and which are too late.
+      </div>
+    </td>
+  </tr>
 </table>

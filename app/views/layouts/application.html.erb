@@ -25,6 +25,7 @@
 </script>
   </head>
   <body>
+    <div id="header"><span id="title">The Stock Factor</span><span class="title-link"><a target="_blank" href="https://twitter.com/thestockfactor">twitter</a><a href="mailto:thestockfactor@gmail.com">email us</a><span> </div>
     <div id="container">
       <%- flash.each do |name, msg| -%>
         <%= content_tag :div, msg, :id => "flash_#{name}" %>

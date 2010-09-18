@@ -24,7 +24,29 @@ a {
   background-color: #FFF;
   padding: 20px 40px;
   border: solid 1px black;
-  margin-top: 20px;
+  /*margin-top: 20px;          */
+}
+
+#title
+{
+    padding-left: 100px;
+    color: white;
+    font-size: 2.6em;
+    font-weight: bold;
+}
+
+.title-link
+{
+    float:right;
+    padding-right: 100px;
+    padding-top: 20px;
+}
+.title-link > a
+{
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    padding-left: 16px;
 }
 
 #flash_notice, #flash_error {
@@ -118,4 +140,9 @@ a {
     font-weight: bold;
     padding-bottom: 12px;
     padding-top: 8px;
+}
+
+.front-list > td
+{
+    padding-right: 12px;
 }
