@@ -6,14 +6,23 @@ class Entry < ActiveRecord::Base
   include Util
   def sent_at_with_zone
     if self.message_type == type_twitter
-      with_zone self.sent_at
+      add_hours(self.sent_at, 1)
     else
-      self.sent_at
+      add_hours(self.sent_at, 0)
     end
   end
 
   def self.find_last_seven_days
     find(:all, :order=>"sent_at", :conditions=>
               ["sent_at > ?", DateTime.now - 7])
+  end
+
+  def sent_at_on_graph
+    if self.message_type == type_twitter
+      add_hours(self.sent_at, -3)
+    else
+      add_hours(self.sent_at, -4)
+    end
+
   end
 end

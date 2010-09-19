@@ -102,7 +102,7 @@ module Util
 
   def ignore_symbols
     ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","`YOU","WAS","HUGE",
-     "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS"]
+     "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS", "WHOA", "VERY","NICE","AMEX"]
   end
 
 
@@ -126,7 +126,8 @@ module Util
     puts e.backtrace
   end
 
-
-
+  def add_hours( datetime, hours )
+    datetime + ( hours * 3600)
+  end
 
 end

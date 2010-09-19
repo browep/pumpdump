@@ -3,6 +3,6 @@ class Quote < ActiveRecord::Base
 
   include Util
   def market_time_with_zone
-    with_zone self.market_time
+    add_hours(self.market_time, -4)
   end
 end
