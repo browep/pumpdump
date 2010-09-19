@@ -18,8 +18,13 @@ a {
   overflow: hidden;
 }
 
+#header {
+    width: 780px;
+    margin: 0 auto;
+}
+
 #container {
-  width: 75%;
+  width: 712px;
   margin: 0 auto;
   background-color: #FFF;
   padding: 20px 40px;
@@ -27,9 +32,8 @@ a {
   /*margin-top: 20px;          */
 }
 
-#title
-{
-    padding-left: 100px;
+#title {
+
     color: white;
     font-size: 2.6em;
     font-weight: bold;
@@ -38,7 +42,7 @@ a {
 .title-link
 {
     float:right;
-    padding-right: 100px;
+    /*padding-right: 100px;*/
     padding-top: 20px;
 }
 .title-link > a
