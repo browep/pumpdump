@@ -81,4 +81,9 @@ class AdminController < ApplicationController
 
 
   end
+
+  def set_auth_token
+    @auth_token = params[:auth_token]
+    session[:auth_token] = @auth_token
+  end
 end

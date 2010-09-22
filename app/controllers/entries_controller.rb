@@ -8,13 +8,20 @@ class EntriesController < ApplicationController
 
       if @symbols[entry.symbol].nil?
         hash = Hash.new
+        set = Set.new
+        set.add(entry.source.id)
         hash[:weight] = entry.source.weight
         hash[:count] = 1
+        hash[:source_count] = set
         @symbols[entry.symbol] = hash
       else
         hash = @symbols[entry.symbol]
         hash[:weight] = hash[:weight] + entry.source.weight
         hash[:count] = hash[:count] + 1;
+        set = hash[:source_count]
+        set.add(entry.source.id)
+        hash[:source_client] = set
+
       end
 
     end

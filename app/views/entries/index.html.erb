@@ -4,16 +4,18 @@
       <table>
         <tr>
           <td></td>
-          <td>Factor</td>
-          <td>Number of mentions</td>
+          <td class="data-column">Factor</td>
+          <td class="data-column">Number of mentions</td>
+          <td class="data-column">Different Sources</td>
         </tr>
         <% @symbols.each do |symbol| %>
 
             <tr class="front-list">
               <td>
                 <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
-              <td><%= symbol[1][:weight] %></td>
-              <td><%= symbol[1][:count] %></td>
+              <td class="data-column"><%= symbol[1][:weight].to_i %></td>
+              <td class="data-column"><%= symbol[1][:count] %></td>
+              <td class="data-column"><%= symbol[1][:source_count].size %></td>
             </tr>
         <% end %>
       </table>
@@ -24,7 +26,17 @@
         Which newsletters get in before which the spike? Which ones are always too late? Each newsletter has a stock
         factor: how often they are right about stocks. Click on a symbol to see when newsletters first sent out messages
         about them and which are too late.
+        <br/>
+        <br/>
+        <hr >
+        <br/>
+        <%= link_to "See the list of sources",:controller=>"sources" %>
+
+
+
+
       </div>
+
     </td>
   </tr>
 </table>

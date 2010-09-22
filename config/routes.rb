@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.sources_list '/sources/list',:controller=> "sources",:action=>"list"
+
   map.resources :quotes
 
   map.resources :entries
@@ -52,5 +54,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
 
   map.root :controller => "entries", :action => "index"
+
 
 end

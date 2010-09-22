@@ -1,11 +1,18 @@
 class SourcesController < ApplicationController
+  before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
+
   def index
+    @title = "Sources"
     @sources = Source.all
   end
-  
+
+  def list
+    @title = "Sources"
+    @sources = Source.all
+  end
+
   def show
-    @javascript_includes = ["http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js","highcharts"]
-    
+
     @source = Source.find(params[:id])
 
     # get all the entries for this source
