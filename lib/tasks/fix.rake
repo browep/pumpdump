@@ -18,4 +18,18 @@ namespace :fix do
     end
 
   end
+
+
+  task :remove_bad_symbols => :environment do
+    include Util
+
+    ignore_symbols.each do |symbol|
+      entries = Entry.find_all_by_symbol(symbol)
+      puts "removing for #{symbol}"
+      entries.each do | entry|
+        puts "destroying #{entry.id}"
+        entry.destroy
+      end
+    end
+  end
 end
