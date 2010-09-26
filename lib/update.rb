@@ -4,6 +4,7 @@ require 'simple-rss'
 require 'open-uri'
 
 require 'net/imap'
+require 'tmail'
 
 module Update
 
@@ -155,6 +156,8 @@ module Update
     username = APP_CONFIG[:email_username]
     password = APP_CONFIG[:email_password]
 
+    puts "looking in #{username} "
+
     emails = []
 
     $imap = Net::IMAP.new("imap.gmail.com", "993",true)
@@ -173,15 +176,18 @@ module Update
         # addresses take the form of {mailbox}@{host}
         envelope = $imap.fetch(message_id, 'ENVELOPE')
         envelope = envelope[0].attr['ENVELOPE']
+        subject = envelope.subject
         mailbox = envelope.from[0].mailbox
         host = envelope.from[0].host
 
         from_address = "#{mailbox}@#{host}"
-        text = $imap.fetch(message_id, 'BODY[2]')[0].attr['BODY[2]']
-        subject = envelope.subject
+        msg = $imap.fetch(message_id,'RFC822')[0].attr['RFC822']
+        mail = TMail::Mail.parse(msg)
+        body = mail.body
+
 
         map[:from_address] = from_address
-        map[:body] = text
+        map[:body] = body
         map[:uid] = message_id
         map[:subject] = subject
         map[:sent_at] = DateTime.parse(envelope.date)
