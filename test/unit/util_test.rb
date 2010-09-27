@@ -1,4 +1,4 @@
-require '../lib/util.rb'
+#require '../lib/util.rb'
 require 'test/unit'
 require 'date'
 
@@ -7,6 +7,7 @@ require 'test_helper'
 
 class UtilTester < Test::Unit::TestCase
   include Util
+  include Update
   def test_days_ago
 
     puts " puts"
@@ -36,6 +37,28 @@ class UtilTester < Test::Unit::TestCase
     assert(Entry.SELL == tim_alert_action({:subject=>"Sold 30k LQMT"}))
     assert(Entry.SHORT == tim_alert_action({:subject=>"here is some crap"}))
     assert(Entry.COVER == tim_alert_action({:subject=>"Got Squeezed On CNSt, Playing It Safe"}))
+
+  end
+
+  def test_email_msg
+#    begin
+#      source = Source.new(:address=>"this@that.com")
+#      email = {:from_address=>"this@that.com", :subject=>"GOOG is the symbol", :body=>"here be the text"}
+#      entry = get_and_save_symbol_from_email(email, source)
+#      assert entry.symbol == "GOOG"
+#    end
+    begin
+      source = Source.new(:address=>APP_CONFIG[:timalert_address])
+      email = {:from_address=>APP_CONFIG[:timalert_address], :subject=>"11 Stocks To Watch & Video Watchlist/Video Lesson", :body=>"GOOG would totally be the symbol"}
+      entry = get_and_save_symbol_from_email(email, source)
+      assert_nil entry
+    end
+    begin
+      source = Source.new(:address=>APP_CONFIG[:timalert_address])
+      email = {:from_address=>APP_CONFIG[:timalert_address], :subject=>"Covered LQMT", :body=>"LQMT would totally be the symbol"}
+      entry = get_and_save_symbol_from_email(email, source)
+      assert_nil entry
+    end
 
   end
 

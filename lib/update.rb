@@ -67,6 +67,53 @@ module Update
   end
 
 
+  def get_and_save_symbol_from_email(email, source)
+    entry = nil
+    if source.address.include?(email[:from_address]) || email[:from_address].include?(source.address)
+      text = email[:body]
+
+      # get the symbol from the email
+      symbol = get_symbol_from_text(email[:subject] + " " + strip_html(text))
+
+      if (!symbol.nil? && !ignore_symbols().include?(symbol)) && !(tim_alert?(source) && email[:subject].downcase.include?("stocks to watch"))
+        begin
+          # check to see if this is a TIMalert watchlist, if so skip it
+
+          puts "symbol found for #{source.address}: #{symbol}"
+
+          #if this is a TIMALERT then do special action checking
+          if tim_alert?(source)
+            action = tim_alert_action(email)
+          else
+            action = Entry.BUY
+          end
+
+          entry = Entry.new(:message_type=>type_email(),
+                            :symbol=>symbol,
+                            :sent_at=>email[:sent_at],
+                            :subject=>email[:subject],
+                            :body=>email[:body],
+                            :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
+                            :action=>action
+          )
+
+          entry.source = source
+
+          if entry.save
+            @entry_count += 1
+          end
+
+        rescue => e
+          put_error e
+        end
+      else
+        puts "symbol not found for #{source.address}"
+      end
+    end
+
+    entry
+  end
+
   def do_symbol
     #    start with twitter
     sources = Source.all
@@ -114,39 +161,7 @@ module Update
 
         # check to see if a source is in any of the way unread emails
         emails.each do |email|
-          if source.address.include?(email[:from_address]) || email[:from_address].include?(source.address)
-            text = email[:body]
-            symbol = get_symbol_from_text(email[:subject] + " " + strip_html(text))
-            if !symbol.nil? && !ignore_symbols().include?(symbol)
-              begin
-                puts "symbol found for #{source.address}: #{symbol}"
-
-                #if this is a TIMALERT then do special action checking
-                if tim_alert?(source)
-                  action = tim_alert_action(email)
-                else
-                  action = Entry.BUY
-                end
-
-                entry = Entry.new(:message_type=>type_email(),
-                                  :symbol=>symbol,
-                                  :sent_at=>email[:sent_at],
-                                  :subject=>email[:subject],
-                                  :body=>email[:body],
-                                  :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
-                                  :action=>action
-                )
-                entry.source = source
-                if entry.save
-                  @entry_count += 1
-                end
-              rescue => e
-                  put_error e
-              end
-            else
-              "symbol not found for #{source.address}"
-            end
-          end
+          get_and_save_symbol_from_email(email, source)
         end
 
       end

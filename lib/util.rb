@@ -103,7 +103,7 @@ module Util
   def ignore_symbols
     ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","`YOU","WAS","HUGE",
      "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS", "WHOA", "VERY","NICE","AMEX","NONE","HOT","MEDIA","GOLD",
-    "HERE","ALL"]
+    "HERE","ALL","WOW","DONG","FENG","TON"]
   end
 
 
