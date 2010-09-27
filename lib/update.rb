@@ -85,7 +85,7 @@ module Update
           if tim_alert?(source)
             action = tim_alert_action(email)
           else
-            action = Entry.BUY
+            action = nil
           end
 
           entry = Entry.new(:message_type=>type_email(),
