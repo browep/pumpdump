@@ -1,26 +1,49 @@
 <h1 style="display:inline;"><%= @symbol %></h1>
 
 <a href="http://www.google.com/finance?q=<%= @symbol %>" target="_blank">on google finance</a>
+<span class="search-times"><% [7,14,30].each do |time| %>
+      <% if @search_time != time then %>
+          <span class="selected_time"><%= link_to "#{time.to_s} days",:search_time=>time %></span>
+       <% else %>
+          <span class="selected_time"><%= "#{time.to_s} days" %></span>
+      <% end %>
+
+<% end %></span>
 <br />
-<div id="placeholder" style="width:600px;height:300px;"></div>
+<div id="placeholder" style="width:740px;height:300px;"></div>
 <br />
 <br />
 
 <div class="sub-title">Mentions in newsletters</div>
-<br /><table class="mentions-list">
-  <tr class="table-headers"><td>Time Sent</td><td>Source</td><td>Factor</td><td>View Message</td></tr>
-<% for entry in @entries %>
-    <tr>
-    <td><%= format_datetime(entry.sent_at_with_zone) %>  </td>
-      <td><%= entry.source.name %></td>
-      <td><%= entry.source.weight %></td>
-      <% if entry.message_type == type_twitter then %>
-          <td><%= link_to "view",entry.url %></td>
-      <% elsif entry.message_type == type_email %>
-          <td><%= link_to "view", :action=>"email",:id=>entry %></td>
-      <% end %>
-    </tr>
-<% end %></table>
+<br/>
+<table class="mentions-list">
+  <tr class="table-headers">
+    <td>Time Sent</td>
+    <td>Source</td>
+    <td>Factor</td>
+    <% if @has_direction then %>
+        <td>Direction</td>
+    <% end %>
+
+    <td>View Message</td>
+
+  </tr>
+  <% for entry in @entries %>
+      <tr>
+        <td><%= format_datetime(entry.sent_at_with_zone) %>  </td>
+        <td><%= entry.source.name %></td>
+        <td><%= entry.source.weight %></td>
+        <% if @has_direction then %>
+            <td class="<%= entry.action_display_name %>"><%= entry.action_display_name %></td>
+        <% end %>
+
+        <% if entry.message_type == type_twitter then %>
+            <td><%= link_to "view", entry.url %></td>
+        <% elsif entry.message_type == type_email %>
+            <td><%= link_to "view", :action=>"email", :id=>entry %></td>
+        <% end %>
+      </tr>
+  <% end %></table>
 
 <script language="javascript" type="text/javascript">
 $(function () {
@@ -41,6 +64,14 @@ $(function () {
             {
                 data: <%= @entries_json %>,
                 bars: { show: true }  ,
+            },
+            {
+                data: <%= @buys_json %>,
+                bars: { show: true }  ,
+            },
+            {
+                data: <%= @sells_json %>,
+                bars: { show: true }  ,
             }
         ], {
             y2axis: {
@@ -50,7 +81,7 @@ $(function () {
                 min: <%= @min_price %>
             },
             xaxis: { mode: 'time' },
-            colors: ["#3366FF","#FF6633"]
+            colors: ["#3366FF","#FF6633","#90ee90","#ff0000"]
         }
         );
 

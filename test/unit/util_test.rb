@@ -2,6 +2,8 @@ require '../lib/util.rb'
 require 'test/unit'
 require 'date'
 
+require 'test_helper'
+
 
 class UtilTester < Test::Unit::TestCase
   include Util
@@ -27,6 +29,14 @@ class UtilTester < Test::Unit::TestCase
     assert("RMDT" == get_symbol_from_text("$RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!"))
     assert("TRDX" == get_symbol_from_text("Trend Exploration, Inc. (TRDX) Could Bounce Back!! http://f.ast.ly/ATMTX"))
     assert("TRDX" == get_symbol_from_text("Trend Exploration, Inc. TRDX"))
+
+    assert(Entry.SHORT == tim_alert_action({:subject=>"Shorted 6k More CNST at 3.23ish"}))
+    assert(Entry.BUY == tim_alert_action({:subject=>"Bought 30k LQMT at 72 cents"}))
+    assert(Entry.COVER == tim_alert_action({:subject=>"Covered CNST For Decent Gains"}))
+    assert(Entry.SELL == tim_alert_action({:subject=>"Sold 30k LQMT"}))
+    assert(Entry.SHORT == tim_alert_action({:subject=>"here is some crap"}))
+    assert(Entry.COVER == tim_alert_action({:subject=>"Got Squeezed On CNSt, Playing It Safe"}))
+
   end
 
 

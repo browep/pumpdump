@@ -156,3 +156,25 @@ a {
     padding-left: 8px;
     text-align: center;
 }
+
+.buy,.cover
+{
+    color: #90ee90;
+}
+
+.short,.sell
+{
+    color: #ff0000;
+}
+
+.search-times
+{
+    float:right;
+    padding-right: 16px;
+    padding-top: 12px;
+}
+
+.search-times > span
+{
+    padding-left:6px;
+}

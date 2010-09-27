@@ -102,7 +102,8 @@ module Util
 
   def ignore_symbols
     ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","`YOU","WAS","HUGE",
-     "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS", "WHOA", "VERY","NICE","AMEX","NONE","HOT","MEDIA","GOLD"]
+     "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS", "WHOA", "VERY","NICE","AMEX","NONE","HOT","MEDIA","GOLD",
+    "HERE","ALL"]
   end
 
 
@@ -128,6 +129,50 @@ module Util
 
   def add_hours( datetime, hours )
     datetime + ( hours * 3600)
+  end
+
+  def tim_alert?(source)
+    source.address.include?(APP_CONFIG[:timalert_address]) || APP_CONFIG[:timalert_address].include?(source.address)
+  end
+
+
+  def tim_alert_action(email)
+    # if it contains the magic keywords
+    subject = email[:subject].downcase
+
+    short_words = ["shorted","reshorted"]
+
+    covered_words = ["covered","got squeezed"]
+
+    buy_words = ["bought"]
+
+    sold_words = ["sold"]
+
+    if !subject.nil?
+      short_words.each do |word|
+        if subject.include? word
+          return Entry.SHORT
+        end
+      end
+      covered_words.each do |word|
+        if subject.include? word
+          return Entry.COVER
+        end
+      end
+      buy_words.each do |word|
+        if subject.include? word
+          return Entry.BUY
+        end
+      end
+      sold_words.each do |word|
+        if subject.include? word
+          return Entry.SELL
+        end
+      end
+    end
+
+    Entry.SHORT
+
   end
 
 end

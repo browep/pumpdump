@@ -66,6 +66,7 @@ module Update
     end
   end
 
+
   def do_symbol
     #    start with twitter
     sources = Source.all
@@ -95,7 +96,7 @@ module Update
 
                 # we found a symbol, add it to the array
                 # get the date from rss
-                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid)
+                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid,:action=>Entry.BUY)
                 entry.source = source
                 if entry.save
                   @entry_count += 1
@@ -115,18 +116,25 @@ module Update
         emails.each do |email|
           if source.address.include?(email[:from_address]) || email[:from_address].include?(source.address)
             text = email[:body]
-            symbol = get_symbol_from_text(strip_html(text))
+            symbol = get_symbol_from_text(email[:subject] + " " + strip_html(text))
             if !symbol.nil? && !ignore_symbols().include?(symbol)
               begin
                 puts "symbol found for #{source.address}: #{symbol}"
-                # we found a symbol, add it to the array
-                # get the date from rss
+
+                #if this is a TIMALERT then do special action checking
+                if tim_alert?(source)
+                  action = tim_alert_action(email)
+                else
+                  action = Entry.BUY
+                end
+
                 entry = Entry.new(:message_type=>type_email(),
                                   :symbol=>symbol,
                                   :sent_at=>email[:sent_at],
                                   :subject=>email[:subject],
                                   :body=>email[:body],
-                                  :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}"
+                                  :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
+                                  :action=>action
                 )
                 entry.source = source
                 if entry.save
@@ -147,6 +155,7 @@ module Update
     puts "entries added = #{@entry_count}"
 
   end
+
 
 
   def get_emails(source_address)

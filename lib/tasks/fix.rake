@@ -32,4 +32,18 @@ namespace :fix do
       end
     end
   end
+
+  task :upgrade_1 => :environment do
+    include Util
+    fixed_count = 0
+    Entry.all.each do |entry|
+      entry.update_attribute(:action, 0)
+      fixed_count += 1
+    end
+
+    puts "fixed #{fixed_count} entries out of #{Entry.all.size}"
+
+  end
+
+
 end

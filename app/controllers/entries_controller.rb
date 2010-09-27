@@ -76,9 +76,17 @@ class EntriesController < ApplicationController
     @javascript_includes = ["jquery","jquery.flot","jquery.flot.stack"]
     @symbol = params[:id]
     @title = @symbol
+
+    if !params[:search_time].nil?
+      @search_time = params[:search_time].to_i
+    else
+      @search_time = 7
+    end
     # get all the entries for this
 
-    prices = Quote.find_all_by_symbol(@symbol,:order=>"market_time")
+
+    prices = Quote.find_all_by_symbol(@symbol,:order=>"market_time",:conditions=>
+      ["market_time > ?",DateTime.now - @search_time])
 
     prices_arr = Array.new
     @min_price = nil
@@ -100,15 +108,26 @@ class EntriesController < ApplicationController
 
     # get all the entries
     @entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
-      ["sent_at > ?",DateTime.now - 7])
+      ["sent_at > ?",DateTime.now - @search_time])
 
     entries_arr = []
+    buy_arr = []
+    sell_arr =[]
+    @has_direction = false
     for entry in @entries
-      entries_arr.push([entry.sent_at_on_graph.to_f.to_i * 1000,entry.source.weight])
+      if entry.action.nil?
+        entries_arr.push([entry.sent_at_on_graph.to_f.to_i * 1000,entry.source.weight])
+      elsif entry.action == Entry.BUY || entry.action == Entry.COVER
+        @has_direction = true
+        buy_arr.push([entry.sent_at_on_graph.to_f.to_i * 1000,entry.source.weight])
+      elsif entry.action == Entry.SELL || entry.action == Entry.SHORT
+        @has_direction = true
+        sell_arr.push([entry.sent_at_on_graph.to_f.to_i * 1000,entry.source.weight])
+      end
     end
     @entries_json = entries_arr.to_json
-
-    logger.debug "entries json #{@entries_json}"
+    @buys_json = buy_arr.to_json
+    @sells_json = sell_arr.to_json
 
   end
 

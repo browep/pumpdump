@@ -1,6 +1,6 @@
 class Entry < ActiveRecord::Base
   belongs_to :source
-  attr_accessible :symbol,:sent_at,:guid,:url,:message_type,:subject,:body
+  attr_accessible :symbol,:sent_at,:guid,:url,:message_type,:subject,:body,:action
 
 
   include Util
@@ -25,4 +25,33 @@ class Entry < ActiveRecord::Base
     end
 
   end
+
+  def self.BUY
+    0
+  end
+
+  def self.SHORT
+    1
+  end
+
+  def self.SELL
+    2
+  end
+
+  def self.COVER
+    3
+  end
+
+  def action_display_name
+    if self.action == Entry.BUY
+      "buy"
+    elsif self.action == Entry.SHORT
+      "short"
+    elsif self.action == Entry.COVER
+      "cover"
+    elsif self.action == Entry.SELL
+      "sell"
+    end
+  end
+
 end
