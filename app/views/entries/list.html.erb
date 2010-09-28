@@ -1,0 +1,26 @@
+<% title "Entries" %>
+
+<p><%= link_to "New entry", new_entry_path %></p>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Sent At</th>
+    <th>Source</th>
+    <th>Sybmol</th>
+    <th>Action</th>
+  </tr>
+  <% for entry in @entries %>
+    <tr>
+      <td><%=h entry.id %></td>
+      <td><%=h format_datetime(entry.sent_at) %></td>
+      <td><%=h entry.source.name %></td>
+      <td><%=h entry.symbol %></td>
+      <td><%=h entry.action_display_name %></td>
+      <td><%= link_to "Show", entry %></td>
+      <td><%= link_to "Edit", edit_entry_path(entry) %></td>
+      <td><%= link_to "Destroy", entry, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+

@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.sources_list '/sources/list',:controller=> "sources",:action=>"list"
+  map.entries_list '/entries/list',:controller=>"entries",:action=>"list"
 
   map.resources :quotes
 

@@ -1,16 +1,20 @@
 <% form_for @entry do |f| %>
-  <%= f.error_messages %>
-  <p>
-    <%= f.label :source_id %><br />
-    <%= f.text_field :source_id %>
-  </p>
-  <p>
-    <%= f.label :send_at %><br />
-    <%= f.datetime_select :send_at %>
-  </p>
-  <p>
-    <%= f.label :symbol %><br />
-    <%= f.text_field :symbol %>
-  </p>
-  <p><%= f.submit %></p>
+    <%= f.error_messages %>
+    <p>
+      <%= f.label :source_id %><br/>
+      <%= select(:source,:id, Source.all.collect { |p| [p.name, p.id] }) %>
+    </p>
+    <p>
+      <%= f.label :sent_at %><br/>
+      <%= f.datetime_select :sent_at %>
+    </p>
+    <p>
+      <%= f.label :symbol %><br/>
+      <%= f.text_field :symbol %>
+    </p>
+    <p>
+      <%= f.label :action %><br/>
+      <%= select(:entry, :action, {"Buy"=>Entry.BUY, "Sell"=>Entry.SELL, "Short"=>Entry.SHORT, "Cover"=>Entry.COVER}, {:include_blank => true}) %>
+    </p>
+    <p><%= f.submit %></p>
 <% end %>

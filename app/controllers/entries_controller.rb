@@ -1,4 +1,6 @@
 class EntriesController < ApplicationController
+  before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
+
   def index
 
     @title = "Stocks In Play"
@@ -43,6 +45,9 @@ class EntriesController < ApplicationController
   
   def create
     @entry = Entry.new(params[:entry])
+    @entry.message_type = Entry.EMAIL
+    @entry.guid = "manual-"+rand(100000).to_s
+    @entry.source = Source.find(params[:source][:id])
     if @entry.save
       flash[:notice] = "Successfully created entry."
       redirect_to @entry
@@ -59,7 +64,7 @@ class EntriesController < ApplicationController
     @entry = Entry.find(params[:id])
     if @entry.update_attributes(params[:entry])
       flash[:notice] = "Successfully updated entry."
-      redirect_to @entry
+      redirect_to :action => "list"
     else
       render :action => 'edit'
     end
@@ -133,5 +138,9 @@ class EntriesController < ApplicationController
 
   def email
     @entry = Entry.find(params[:id])
+  end
+
+  def list
+    @entries = Entry.all(:order=>"sent_at DESC")
   end
 end

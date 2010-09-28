@@ -143,7 +143,7 @@ module Update
 
                 # we found a symbol, add it to the array
                 # get the date from rss
-                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid,:action=>Entry.BUY)
+                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid,:action=>nil)
                 entry.source = source
                 if entry.save
                   @entry_count += 1

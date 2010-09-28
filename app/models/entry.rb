@@ -42,6 +42,14 @@ class Entry < ActiveRecord::Base
     3
   end
 
+  def self.TWITTER
+    0
+  end
+
+  def self.EMAIL
+    1
+  end
+
   def action_display_name
     if self.action == Entry.BUY
       "buy"
