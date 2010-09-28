@@ -8,7 +8,7 @@
   <% for source in @sources %>
     <tr>
       <td><%=h source.name %></td>
-      <td><%=h source.weight %></td>
+      <td><%=h source.weight.to_i %></td>
     </tr>
   <% end %>
 </table>

@@ -3,7 +3,7 @@ class SourcesController < ApplicationController
 
   def index
     @title = "Sources"
-    @sources = Source.all
+    @sources = Source.all(:order=>"weight DESC")
   end
 
   def list

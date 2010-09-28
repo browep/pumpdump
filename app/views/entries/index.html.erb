@@ -1,50 +1,51 @@
-<div><h1 style="text-align:center;">What is the stock factor?</h1>
+<div>
+  <div><h1 style="text-align:center;">What is the "stock factor"?</h1>
 
-        Which newsletters get in before which the spike? Which ones are always too late? Each newsletter has a stock
-        factor: how often they are right about stocks. Click on a symbol to see when newsletters first sent out messages
-        which are too late.
-        <br/>
-        <br/>
-        <hr >
-        <br/>
-        <%= link_to "See the list of sources",:controller=>"sources" %>
+    Which newsletters get in before which the spike? Which ones are always too late? Each newsletter has a stock
+    factor: how often they are right about stocks. Click on a symbol to see when newsletters first sent out messages
+    which are too late.     <%= link_to "See the list of sources", :controller=>"sources" %>
+
+    <br/>
+    <br/>
+    <hr>
+    <br/>
 
 
+  </div>
+  <table width="100%" style="margin: 0 auto;">
+    <tr>
+      <td class="center-column" valign="top"><h1 style="text-align:center;">Symbols in Play</h1>
+        <table width="100%">
+          <tr>
+            <td></td>
+            <td class="data-column">Factor</td>
+            <td class="data-column">Number of mentions</td>
+            <td class="data-column">Different Sources</td>
+          </tr>
+          <% @symbols.each do |symbol| %>
 
-
-      </div>
-<table width="100%">
-  <tr>
-    <td><h1 style="text-align:center;">Symbols in Play</h1>
-      <table>
-        <tr>
-          <td></td>
-          <td class="data-column">Factor</td>
-          <td class="data-column">Number of mentions</td>
-          <td class="data-column">Different Sources</td>
-        </tr>
-        <% @symbols.each do |symbol| %>
-
-            <tr class="front-list">
-              <td>
-                <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
-              <td class="data-column"><%= symbol[1][:weight].to_i %></td>
-              <td class="data-column"><%= symbol[1][:count] %></td>
-              <td class="data-column"><%= symbol[1][:source_count].size %></td>
-            </tr>
-        <% end %>
-      </table>
-    </td>
-    <td valign="top">
-     <h1 style="text-align:center;">Hot Right Now</h1>
+              <tr class="front-list">
+                <td>
+                  <span class="home-symbol"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
+                <td class="data-column"><%= symbol[1][:weight].to_i %></td>
+                <td class="data-column"><%= symbol[1][:count] %></td>
+                <td class="data-column"><%= symbol[1][:source_count].size %></td>
+              </tr>
+          <% end %>
+        </table>
+      </td>
+      <td style="width:24px;"></td>
+      <td class="center-column" valign="top">
+        <h1 style="text-align:center;">Hot Right Now</h1>
         <% for entry in @recent_entries %>
 
-            <p><%= "#{entry.source.name} (#{entry.source.weight.to_i})" %> -> <%= link_to entry.symbol,:action=>"symbol",:id=>entry.symbol %></p>
-
+            <p><%= "#{entry.source.name} (#{entry.source.weight.to_i})" %>
+              -> <%= link_to entry.symbol, :action=>"symbol", :id=>entry.symbol %></p>
 
         <% end %>
+      </td>
+    </tr>
+  </table>
 
 
-    </td>
-  </tr>
-</table>
+</div>
