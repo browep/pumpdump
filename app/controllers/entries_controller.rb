@@ -7,7 +7,6 @@ class EntriesController < ApplicationController
     entries = Entry.find_last_seven_days()
     @symbols = Hash.new
     for entry in entries
-
       if @symbols[entry.symbol].nil?
         hash = Hash.new
         set = Set.new
@@ -25,13 +24,14 @@ class EntriesController < ApplicationController
         hash[:source_client] = set
 
       end
-
     end
 
     # sort by highest factor
     @symbols = @symbols.sort { |a,b|
       b[1][:weight] <=> a[1][:weight]
     }
+
+    @recent_entries = Entry.find(:all,:order=>"sent_at DESC",:limit=>45)
   end
 
   
