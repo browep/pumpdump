@@ -58,12 +58,15 @@ module Util
 
   end
 
-  def get_symbol_from_text(text)
+  def get_symbols_from_text(text)
+    symbols = []
     matches = ("$"+ text +" ").scan(/[:\s\(\$\*#]([A-Z]{3,5})[\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
-      return matches[0][0]
+      matches.each do |match|
+        symbols << match[0]
+      end
     end
-    nil
+    symbols
   end
 
   def type_twitter
@@ -101,9 +104,9 @@ module Util
   end
 
   def ignore_symbols
-    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","`YOU","WAS","HUGE",
+    ["ONE","BIG","NOW","OTC","GET","TOP","NEW","BUY","FREE","PMI","MACD","EST","EPIC","MIME","YOU","WAS","HUGE",
      "HOT","DONT","MISS","THIS","HOD","VERY","HOT","NEWS", "WHOA", "VERY","NICE","AMEX","NONE","HOT","MEDIA","GOLD",
-    "HERE","ALL","WOW","DONG","FENG","TON","GREAT","NOTE","TODAY"]
+    "HERE","ALL","WOW","DONG","FENG","TON","GREAT","NOTE","TODAY","LLC"]
   end
 
 
@@ -173,6 +176,11 @@ module Util
 
     Entry.SHORT
 
+  end
+
+  def bad_symbol?(symbol)
+    found_symbols = BadSymbol.find_by_symbol(symbol)
+    !found_symbols.nil? && found_symbols > 0
   end
 
 end

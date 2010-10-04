@@ -45,5 +45,17 @@ namespace :fix do
 
   end
 
+  task :bad_symbols => :environment do
+    include Util
+    ignore_symbols.each do |symbol|
+      bs = BadSymbol.new(:symbol=>symbol)
+      if bs.save
+        puts "just added #{bs.to_yaml}"
+      end
+    end
+
+
+  end
+
 
 end

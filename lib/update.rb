@@ -73,41 +73,44 @@ module Update
       text = email[:body]
 
       # get the symbol from the email
-      symbol = get_symbol_from_text(email[:subject] + " " + strip_html(text))
+      symbols = get_symbols_from_text(email[:subject] + " " + strip_html(text))
+      symbols.each do |symbol|
+        if (!symbol.nil? && !bad_symbol?(symbol)) && !(tim_alert?(source) && email[:subject].downcase.include?("stocks to watch"))
+          begin
+            # check to see if this is a TIMalert watchlist, if so skip it
 
-      if (!symbol.nil? && !ignore_symbols().include?(symbol)) && !(tim_alert?(source) && email[:subject].downcase.include?("stocks to watch"))
-        begin
-          # check to see if this is a TIMalert watchlist, if so skip it
+            puts "symbol found for #{source.address}: #{symbol}"
 
-          puts "symbol found for #{source.address}: #{symbol}"
+            #if this is a TIMALERT then do special action checking
+            if tim_alert?(source)
+              action = tim_alert_action(email)
+            else
+              action = nil
+            end
 
-          #if this is a TIMALERT then do special action checking
-          if tim_alert?(source)
-            action = tim_alert_action(email)
-          else
-            action = nil
+            entry = Entry.new(:message_type=>type_email(),
+                              :symbol=>symbol,
+                              :sent_at=>email[:sent_at],
+                              :subject=>email[:subject],
+                              :body=>email[:body],
+                              :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
+                              :action=>action
+            )
+
+            entry.source = source
+
+            if entry.save
+              @entry_count += 1
+            end
+
+          rescue => e
+            put_error e
           end
-
-          entry = Entry.new(:message_type=>type_email(),
-                            :symbol=>symbol,
-                            :sent_at=>email[:sent_at],
-                            :subject=>email[:subject],
-                            :body=>email[:body],
-                            :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
-                            :action=>action
-          )
-
-          entry.source = source
-
-          if entry.save
-            @entry_count += 1
-          end
-
-        rescue => e
-          put_error e
         end
-      else
-        puts "symbol not found for #{source.address}"
+      end
+
+      if symbols.nil? || symbols.size == 0
+        puts "no symbols found for #{source.address}"
       end
     end
 
@@ -137,19 +140,22 @@ module Update
             # check to see if we already have this one
             if Entry.find(:first, :conditions=>{:guid=>rss_entry.guid}).nil?
 
-              symbol = get_symbol_from_text rss_entry.description
-              if !symbol.nil? && !ignore_symbols().include?(symbol)
-                puts "symbol: #{symbol}"
+              symbols = get_symbols_from_text rss_entry.description
+              symbols.each do |symbol|
+                if !symbol.nil? && !ignore_symbols().include?(symbol)
+                  puts "symbol: #{symbol}"
 
-                # we found a symbol, add it to the array
-                # get the date from rss
-                entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid,:action=>nil)
-                entry.source = source
-                if entry.save
-                  @entry_count += 1
+                  # we found a symbol, add it to the array
+                  # get the date from rss
+                  entry = Entry.new(:message_type=>type_twitter(), :symbol=>symbol, :sent_at=>rss_entry.pubDate, :url=>rss_entry.link, :guid=>rss_entry.guid, :action=>nil)
+                  entry.source = source
+                  if entry.save
+                    @entry_count += 1
+                  end
+
                 end
-
               end
+
             end
           end
         rescue => e
