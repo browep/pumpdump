@@ -16,10 +16,11 @@ class UtilTester < Test::Unit::TestCase
   end
 
   def test_get_symbols
-    result = get_symbols_from_text("#HLNT is on a break out ,can only imagine when we recieve word on the dong feng deal -#EIGH is holding gains well -always get in the dips")
-    assert(result.include?("HLNT") && result.include?("EIGH"))
+    result = get_symbols_from_text("#HLNT is on HLNT a break out ,can only imagine when we recieve word on the dong feng deal -#EIGH is holding gains well -always get in the dips")
+    assert(result.include?("HLNT") && result.include?("EIGH") && result.size == 2)
     assert( get_symbols_from_text("Remember who called RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
-    assert(get_symbols_from_text("Remember who called :RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
+    result = get_symbols_from_text("Remember who called :RMDT as RMDT RMDT RMDT a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!")
+    assert(result.include?("RMDT") && result.size == 1)
     assert(get_symbols_from_text("RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
     assert(get_symbols_from_text("$RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
     assert(get_symbols_from_text("Trend Exploration, Inc. (TRDX) Could Bounce Back!! http://f.ast.ly/ATMTX").include?"TRDX")

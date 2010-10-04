@@ -59,14 +59,14 @@ module Util
   end
 
   def get_symbols_from_text(text)
-    symbols = []
+    symbols = Set.new
     matches = ("$"+ text +" ").scan(/[:\s\(\$\*#]([A-Z]{3,5})[\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
       matches.each do |match|
         symbols << match[0]
       end
     end
-    symbols
+    symbols.to_a
   end
 
   def type_twitter
