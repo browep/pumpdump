@@ -142,7 +142,7 @@ module Update
 
               symbols = get_symbols_from_text rss_entry.description
               symbols.each do |symbol|
-                if !symbol.nil? && !ignore_symbols().include?(symbol)
+                if !symbol.nil? && !bad_symbol?(symbol)
                   puts "symbol: #{symbol}"
 
                   # we found a symbol, add it to the array
