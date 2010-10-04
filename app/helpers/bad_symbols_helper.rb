@@ -1,0 +1,2 @@
+module BadSymbolsHelper
+end

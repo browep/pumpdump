@@ -1,0 +1,17 @@
+<% title "Bad Symbols" %>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+  <% for bad_symbols in @bad_symbols %>
+    <tr>
+      <td><%=h bad_symbols.symbol %></td>
+      <td><%= link_to "Show", bad_symbols %></td>
+      <td><%= link_to "Edit", edit_bad_symbol_path(bad_symbols) %></td>
+      <td><%= link_to "Destroy", bad_symbols, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Bad Symbols", new_bad_symbol_path %></p>

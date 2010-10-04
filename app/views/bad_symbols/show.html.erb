@@ -1,0 +1,12 @@
+<% title "Bad Symbols" %>
+
+<p>
+  <strong>Name:</strong>
+  <%=h @bad_symbol.symbol %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_bad_symbol_path(@bad_symbol) %> |
+  <%= link_to "Destroy", @bad_symbols, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", bad_symbol_path %>
+</p>
