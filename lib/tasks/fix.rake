@@ -57,5 +57,23 @@ namespace :fix do
 
   end
 
+  task :get_data => :environment do
+    include Util
+    quotes = Quote.find(:all,:order=>"market_time",:conditions=>
+      ["market_time > '2010-10-05 13:30:00'"])
+#    puts quotes.size
+#    puts quotes[0].to_yaml
+#    puts quotes[-1].to_yaml
+
+    puts "INSERT INTO `quotes` (`symbol`, `created_at`, `updated_at`,`market_time`, `last_price`) VALUES"
+
+    quotes.each do |quote|
+#      puts "('#{quote.symbol}', '#{ quote.created_at.to_s[0,19]}', '#{quote.updated_at.to_s[0,19]}', '#{quote.market_time.to_s[0,19]}', #{quote.last_price}),"
+      puts "('#{quote.symbol}', '#{add_hours( quote.created_at, 4)}', '#{add_hours( quote.updated_at, 4)}', '#{add_hours(quote.market_time, 4)}', #{quote.last_price}),"
+    end
+
+
+  end
+
 
 end

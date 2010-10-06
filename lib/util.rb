@@ -1,3 +1,4 @@
+
 module Util
   # gets how many days ago it was, returns 0 if it was since the last market close
   def days_ago(date)
@@ -179,8 +180,46 @@ module Util
   end
 
   def bad_symbol?(symbol)
-    found_symbols = BadSymbol.find_by_symbol(symbol)
-    !found_symbols.nil? && found_symbols > 0
+    found_symbols = BadSymbol.find_all_by_symbol(symbol)
+    !found_symbols.nil? && found_symbols.size > 0
+  end
+
+  def html2text(html)
+    html = html.gsub(/<style type='text\/css'>.*?<\/style>/, "")
+    html = html.gsub("background:","invalid:")
+    html = html.gsub("background-color:","invalid:")
+    html = html.gsub("background-image:","invalid:")
+  end
+
+  def html2text_2(html)
+    text = html.
+            gsub(/(&nbsp;|\n|\s)+/im, ' ').squeeze(' ').strip.
+            gsub(/<([^\s]+)[^>]*(src|href)=\s*(.?)([^>\s]*)\3[^>]*>\4<\/\1>/i, '\4')
+
+    links = []
+    linkregex = /<[^>]*(src|href)=\s*(.?)([^>\s]*)\2[^>]*>\s*/i
+    while linkregex.match(text)
+      links << $~[3]
+      text.sub!(linkregex, "[#{links.size}]")
+    end
+
+    text = CGI.unescapeHTML(
+            text.
+                    gsub(/<(script|style)[^>]*>.*<\/\1>/im, '').
+                    gsub(/<!--.*-->/m, '').
+                    gsub(/<hr(| [^>]*)>/i, "___\n").
+                    gsub(/<li(| [^>]*)>/i, "\n* ").
+                    gsub(/<blockquote(| [^>]*)>/i, '> ').
+                    gsub(/<(br)(| [^>]*)>/i, "\n").
+                    gsub(/<(\/h[\d]+|p)(| [^>]*)>/i, "\n\n").
+                    gsub(/<[^>]*>/, '')
+    ).lstrip.gsub(/\n[ ]+/, "\n") + "\n"
+
+    for i in (0...links.size).to_a
+      text = text + "\n  [#{i+1}] <#{CGI.unescapeHTML(links[i])}>" unless links[i].nil?
+    end
+    links = nil
+    text
   end
 
 end

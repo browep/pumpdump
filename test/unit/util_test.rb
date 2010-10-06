@@ -67,5 +67,13 @@ class UtilTester < Test::Unit::TestCase
 
   end
 
+  def test_html2text
+    text = IO.read(RAILS_ROOT + '/test/unit/sykes.html')
+    assert(text.include?("background:"))
+
+    after = html2text text
+    assert(!after.include?("background:"))
+  end
+
 
 end

@@ -10,6 +10,21 @@ module Update
 
   include Util
 
+
+  def fetch(uri_str, limit = 10)
+    # You should choose better exception.
+    raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+    response = Net::HTTP.get_response(URI.parse(uri_str))
+    case response
+      when Net::HTTPSuccess then
+        response
+      when Net::HTTPRedirection then
+        fetch(response['location'], limit - 1)
+      else
+        response.error!
+    end
+  end
   def do_quote
     if during_trading_time?(DateTime.now().in_time_zone('Eastern Time (US & Canada)')) || APP_CONFIG[:observe_market_time] == false
       # get all the symbols for the past 7 days
@@ -51,22 +66,6 @@ module Update
   end
 
 
-  def fetch(uri_str, limit = 10)
-    # You should choose better exception.
-    raise ArgumentError, 'HTTP redirect too deep' if limit == 0
-
-    response = Net::HTTP.get_response(URI.parse(uri_str))
-    case response
-      when Net::HTTPSuccess then
-        response
-      when Net::HTTPRedirection then
-        fetch(response['location'], limit - 1)
-      else
-        response.error!
-    end
-  end
-
-
   def get_and_save_symbol_from_email(email, source)
     entry = nil
     if source.address.include?(email[:from_address]) || email[:from_address].include?(source.address)
@@ -92,7 +91,7 @@ module Update
                               :symbol=>symbol,
                               :sent_at=>email[:sent_at],
                               :subject=>email[:subject],
-                              :body=>email[:body],
+                              :body=>html2text(email[:body]),
                               :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
                               :action=>action
             )
