@@ -61,7 +61,7 @@ module Util
 
   def get_symbols_from_text(text)
     symbols = Set.new
-    matches = ("$"+ text +" ").scan(/[:\s\(\$\*#]([A-Z]{3,5})[\.\)\s!\*]/)
+    matches = ("$"+ text +" ").scan(/[:\s\(\$\*#]([A-Z]{3,5})[,\.\)\s!\*]/)
     if(!matches.nil? && matches.size() > 0 )
       matches.each do |match|
         symbols << match[0]

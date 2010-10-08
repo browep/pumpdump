@@ -15,21 +15,24 @@ class BadSymbolsController < ApplicationController
   end
   
   def create
-    @bad_symbol = BadSymbol.new(params[:bad_symbol])
-    if @bad_symbol.save
-      flash[:notice] = "Successfully created bad symbols."
-      BadSymbol.all.each do |symbol|
-        entries = Entry.find_all_by_symbol(symbol.symbol)
-        puts "removing for #{symbol.symbol}"
-        entries.each do |entry|
-          puts "destroying #{entry.id}"
-          entry.destroy
+    symbols_text = params[:bad_symbol][:symbol]
+    bad_symbols = symbols_text.split(",")
+    bad_symbols.each do | symbol_param |
+      bad_symbol = BadSymbol.new(:symbol=>symbol_param)
+
+      if bad_symbol.save
+        flash[:notice] = "Successfully created bad symbols."
+        BadSymbol.all.each do |symbol|
+          entries = Entry.find_all_by_symbol(symbol.symbol)
+          puts "removing for #{symbol.symbol}"
+          entries.each do |entry|
+            puts "destroying #{entry.id}"
+            entry.destroy
+          end
         end
       end
-      redirect_to @bad_symbol
-    else
-      render :action => 'new'
     end
+    redirect_to :action => "new"
   end
   
   def edit

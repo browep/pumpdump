@@ -22,6 +22,7 @@ class UtilTester < Test::Unit::TestCase
     result = get_symbols_from_text("Remember who called :RMDT as RMDT RMDT RMDT a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!")
     assert(result.include?("RMDT") && result.size == 1)
     assert(get_symbols_from_text("RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
+    assert(get_symbols_from_text(" RMDT, as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
     assert(get_symbols_from_text("$RMDT as a long play weeks ago at .01!!!! We're up 490% now! Chalk up another Epic pick!").include?"RMDT")
     assert(get_symbols_from_text("Trend Exploration, Inc. (TRDX) Could Bounce Back!! http://f.ast.ly/ATMTX").include?"TRDX")
     assert(get_symbols_from_text("Trend Exploration, Inc. TRDX").include?"TRDX")

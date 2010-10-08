@@ -2,7 +2,12 @@
   <%= f.error_messages %>
   <p>
     <%= f.label :symbol %><br />
-    <%= f.text_field :symbol %>
+    <%= f.text_field :symbol,:id=>"tb" %>
+
+<script>
+var txtBox=document.getElementById("tb" );
+if (txtBox!=null ) txtBox.focus();
+</script>
   </p>
   <p><%= f.submit %></p>
 <% end %>
