@@ -76,5 +76,22 @@ class UtilTester < Test::Unit::TestCase
     assert(!after.include?("background:"))
   end
 
+  def test_get_quotes
+    msft = get_quote("MSFT")
+    assert !msft.nil?
+
+    quote = get_quote("PFTE")
+    assert !quote.nil?
+
+    quote = get_quote("IIII0L")
+    assert quote.nil?
+
+  end
+
+  def test_bad_symbol
+    assert is_bad_symbol?("NOW")
+  end
+
+
 
 end

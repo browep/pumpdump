@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :bad_symbols
+  map.resources :bad_symbols, :collection=> {:to_verify=>:get}
 
   map.sources_list '/sources/list',:controller=> "sources",:action=>"list"
   map.entries_list '/entries/list',:controller=>"entries",:action=>"list"

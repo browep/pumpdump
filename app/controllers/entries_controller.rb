@@ -31,7 +31,7 @@ class EntriesController < ApplicationController
       b[1][:weight] <=> a[1][:weight]
     }
 
-    @recent_entries = Entry.find(:all,:order=>"sent_at DESC",:limit=>45)
+    @recent_entries = Entry.find(:all,:order=>"sent_at DESC",:limit=>75)
   end
 
   

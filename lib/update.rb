@@ -25,6 +25,8 @@ module Update
         response.error!
     end
   end
+
+
   def do_quote
     if during_trading_time?(DateTime.now().in_time_zone('Eastern Time (US & Canada)')) || APP_CONFIG[:observe_market_time] == false
       # get all the symbols for the past 7 days
@@ -36,32 +38,66 @@ module Update
       symbols_added = []
       not_symbols_added = []
       for symbol in symbols
-        begin
-          url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
-          body = fetch(url).body
-          body = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
-
-          result = JSON.parse(body)
-          price = result["l"]
-
-          quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
-          if quote.save
-
-            symbols_added.push(symbol)
-          end
-
-
-        rescue => e
-          not_symbols_added.push(symbol)
-          puts e.inspect
+        added = get_quote(symbol)
+        if added.nil?
+          not_symbols_added << symbol
+        else
+          symbols_added << symbol
         end
+
       end
 
       puts "#{DateTime.now.to_s}: added #{symbols_added.size} quotes: #{symbols_added.join(", ")}"
       puts "not added: #{not_symbols_added.join(", ")}" unless not_symbols_added.size == 0
+      not_symbols_added.each do |symbol|
+        begin
+          if BadSymbol.find_all_by_symbol(symbol).size == 0
+            _bad_symbol = BadSymbol.new({:symbol=>symbol, :verified=>false})
+            _bad_symbol.save
+          end
+        rescue => e
+        end
+      end
     else
       puts "#{DateTime.now.to_s} not during trading hours."
 
+    end
+  end
+
+  def get_quote(symbol)
+
+    begin
+      url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
+      body = fetch(url).body
+      body = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
+
+      result = JSON.parse(body)
+      price = result["l"]
+      quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
+      if quote.save
+        return symbol
+      end
+    rescue => e
+      puts symbol
+      puts e.inspect
+      begin
+        #google failed, try yahoo
+        url = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbol}&f=l1"
+        body = fetch(url).body
+        last_price = body.to_f
+        # t
+        if last_price == 0
+          return nil
+        end
+        quote = Quote.new({:symbol=>symbol, :last_price=>last_price, :market_time=>DateTime.now})
+        if quote.save
+          return symbol
+        end
+      rescue => e
+        puts symbol
+        puts e.inspect
+      end
+      return nil
     end
   end
 
@@ -74,7 +110,7 @@ module Update
       # get the symbol from the email
       symbols = get_symbols_from_text(email[:subject] + " " + strip_html(text))
       symbols.each do |symbol|
-        if (!symbol.nil? && !bad_symbol?(symbol)) && !(tim_alert?(source) && email[:subject].downcase.include?("stocks to watch"))
+        if (!symbol.nil? && !is_bad_symbol?(symbol)) && !(tim_alert?(source) && email[:subject].downcase.include?("stocks to watch"))
           begin
             # check to see if this is a TIMalert watchlist, if so skip it
 
@@ -141,7 +177,7 @@ module Update
 
               symbols = get_symbols_from_text rss_entry.description
               symbols.each do |symbol|
-                if !symbol.nil? && !bad_symbol?(symbol)
+                if !symbol.nil? && !is_bad_symbol?(symbol)
                   puts "symbol: #{symbol}"
 
                   # we found a symbol, add it to the array

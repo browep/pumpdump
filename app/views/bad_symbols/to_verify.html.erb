@@ -1,0 +1,5 @@
+<table><% for symbol in @symbols %>
+    <tr><td><%= link_to symbol.symbol,:action => "verify",:id=>symbol %></td></tr>
+
+
+<% end %></table>

@@ -179,8 +179,8 @@ module Util
 
   end
 
-  def bad_symbol?(symbol)
-    found_symbols = BadSymbol.find_all_by_symbol(symbol)
+  def is_bad_symbol?(symbol)
+    found_symbols = BadSymbol.find_all_by_symbol(symbol,:conditions=>["verified = 1"])
     !found_symbols.nil? && found_symbols.size > 0
   end
 
