@@ -2,7 +2,7 @@ require 'net/http'
 require 'json'
 require 'simple-rss'
 require 'open-uri'
-
+require "util"
 require 'net/imap'
 require 'tmail'
 
@@ -38,11 +38,16 @@ module Update
       symbols_added = []
       not_symbols_added = []
       for symbol in symbols
-        added = get_quote(symbol)
-        if added.nil?
-          not_symbols_added << symbol
+        price = get_quote(symbol)
+        if !price.nil?
+          quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
+          if quote.save
+            symbols_added << symbol
+          else
+            not_symbols_added << symbol
+          end
         else
-          symbols_added << symbol
+          not_symbols_added << symbol
         end
 
       end
@@ -73,32 +78,31 @@ module Update
 
       result = JSON.parse(body)
       price = result["l"]
-      quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
-      if quote.save
-        return symbol
+      if !price.nil? && price.to_f
+        return price.to_f
       end
     rescue => e
       puts symbol
       puts e.inspect
-      begin
-        #google failed, try yahoo
-        url = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbol}&f=l1"
-        body = fetch(url).body
-        last_price = body.to_f
-        # t
-        if last_price == 0
-          return nil
-        end
-        quote = Quote.new({:symbol=>symbol, :last_price=>last_price, :market_time=>DateTime.now})
-        if quote.save
-          return symbol
-        end
-      rescue => e
-        puts symbol
-        puts e.inspect
-      end
-      return nil
     end
+
+    begin
+      #google failed, try yahoo
+      url        = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbol}&f=l1"
+      body       = fetch(url).body
+      last_price = body.to_f
+      # t
+      if last_price == 0
+        return nil
+      else return last_price
+      end
+    rescue => e
+      puts symbol
+      puts e.inspect
+    end
+
+    nil
+
   end
 
 

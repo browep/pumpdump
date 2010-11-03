@@ -16,10 +16,11 @@ class ApiController < ApplicationController
   end
 
   def symbol
+    render :text => "OK"
+
     puts "starting \"symbol\" : #{Time.now.to_s}"
     do_symbol
     puts "ending \"symbol\" : #{Time.now.to_s}"
-    render :text => "OK"
 
   end
 end

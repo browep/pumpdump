@@ -18,5 +18,13 @@ namespace :update do
     do_symbol
   end
 
+  task :no_env do
+    puts "no env"
+  end
+
+  task :env => :environment do
+    puts "env"
+  end
+
 
 end
