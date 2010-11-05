@@ -8,6 +8,11 @@ require "json"
 require "thread"
 
 
+@offset = 2
+if ARGV[2]
+  @offset = ARGV[2].to_i
+end
+
 def load_config
   raw_config = File.read("/usr/local/pumpdump/conf/app_config.yml")
   app_config = YAML.load(raw_config)
@@ -30,7 +35,8 @@ def load_config
 end
 
 def time_to_sql_timestamp(time)
-   time.strftime("%Y-%m-%d %H:%M:%S")
+
+   (time + 60 * 60 * @offset).strftime("%Y-%m-%d %H:%M:%S")
 end
 
 def do_symbol(dbh, symbol)
@@ -42,7 +48,7 @@ def do_symbol(dbh, symbol)
       # insert this guy into the db
       market_time     = Time.now
       market_time_str = time_to_sql_timestamp(market_time)
-      dbh.query("INSERT INTO `quotes` (`created_at`, `symbol`, `updated_at`, `last_price`, `exchange`, `market_time`) VALUES('#{market_time_str}', '#{symbol}', '#{market_time_str}', #{price}, NULL, '#{market_time_str}')")
+      insert_ret = dbh.query("INSERT INTO `quotes` (`created_at`, `symbol`, `updated_at`, `last_price`, `exchange`, `market_time`) VALUES('#{market_time_str}', '#{symbol}', '#{market_time_str}', #{price}, 'script', '#{market_time_str}')")
     end
   rescue => e
     puts e
@@ -54,6 +60,14 @@ include Update
 include Util
 
 db_config,app_config = load_config
+
+# check to make sure we are in market time
+
+if app_config[:observe_market_time] && !during_market_hours?(DateTime.now)
+  puts "not during market hours"
+  puts DateTime.now
+  exit(0)
+end
 
 # connect to the db
 dbh = Mysql.real_connect("localhost", db_config[:username], db_config[:password],db_config[:database])
