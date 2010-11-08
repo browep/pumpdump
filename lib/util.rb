@@ -25,7 +25,11 @@ module Util
 
   end
 
-  def during_market_hours?(datetime)
+
+  def during_market_hours?(datetime,verbose=false)
+    if verbose
+      puts "day: #{datetime.day()}, hour: #{datetime.hour()}, minute: #{datetime.min()}"
+    end
     if (datetime.day() <= 5 && (datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30) && datetime.hour() < 16) )
       return true
     end
@@ -96,10 +100,13 @@ module Util
 
   end
 
-  def during_trading_time?( datetime)
-    puts "hour: #{datetime.hour()}"
-    puts "minute: #{datetime.min()}"
-    puts "zone: #{datetime.zone()}" 
+  def during_trading_time?( datetime,verbose=false)
+    if verbose then
+      puts "day: #{datetime.cwday()}"
+      puts "hour: #{datetime.hour()}"
+      puts "minute: #{datetime.min()}"
+      puts "zone: #{datetime.zone()}"
+    end
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 
   end
@@ -132,6 +139,9 @@ module Util
   end
 
   def add_hours( datetime, hours )
+    if datetime.instance_of?(DateTime)
+      return datetime + hours/24.0
+    end
     datetime + ( hours * 3600)
   end
 
