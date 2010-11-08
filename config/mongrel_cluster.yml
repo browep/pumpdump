@@ -7,4 +7,4 @@ cwd: /var/rails/pumpdump
 environment: production
 user: paul
 pid_file: /var/rails/pumpdump/tmp/mongrel.pid
-servers: 3
+servers: 2
