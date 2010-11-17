@@ -96,7 +96,7 @@ def do_symbol(dbh, symbol)
       # insert this guy into the db
       market_time     = Time.now
       market_time_str = time_to_sql_timestamp(market_time)
-      insert_sql = "INSERT INTO `quotes` (`created_at`, `symbol`, `updated_at`, `last_price`, `exchange`, `market_time`) VALUES('#{market_time_str}', '#{symbol}', '#{market_time_str}', #{price}, 'script', '#{market_time_str}')"
+      insert_sql = "INSERT INTO `quotes` (`symbol`,  `last_price`,  `market_time`) VALUES('#{symbol}', #{price}, '#{market_time_str}')"
       if !@options[:dryrun]
         insert_ret = dbh.query(insert_sql)
       else
@@ -130,7 +130,7 @@ dbh = Mysql.real_connect("localhost", db_config[:username], db_config[:password]
 seven_days_ago = Time.now - 7* 60 * 60 * 24
 seven_days_ago_str = time_to_sql_timestamp(seven_days_ago)
 
-in_play_results = dbh.query("SELECT distinct symbol from entries where created_at > '#{seven_days_ago_str}'")
+in_play_results = dbh.query("SELECT distinct symbol from entries where created_at > '#{seven_days_ago_str}' and symbol = 'SPPH'")
 
 q = Queue.new
 

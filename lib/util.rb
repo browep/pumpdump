@@ -138,6 +138,10 @@ module Util
     puts e.backtrace
   end
 
+  def add_days( datetime, days)
+    add_hours(datetime, days*24 )
+  end
+
   def add_hours( datetime, hours )
     if datetime.instance_of?(DateTime)
       return datetime + hours/24.0
@@ -230,6 +234,14 @@ module Util
     end
     links = nil
     text
+  end
+
+  def secs_in_day
+    60 * 60 * 24
+  end
+
+  def time_to_sql_timestamp(time)
+    time.strftime("%Y-%m-%d %H:%M:%S")
   end
 
 end

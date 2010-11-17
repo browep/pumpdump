@@ -13,7 +13,7 @@ class Entry < ActiveRecord::Base
   end
 
   def self.find_last_seven_days
-    find(:all, :order=>"sent_at", :conditions=>
+    find(:all,:select=>"sent_at,id,symbol,source_id", :order=>"sent_at", :conditions=>
               ["sent_at > ?", DateTime.now - 7])
   end
 

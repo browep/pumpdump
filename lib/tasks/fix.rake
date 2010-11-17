@@ -76,14 +76,4 @@ namespace :fix do
   end
 
 
-  task :two => :environment do
-    include Util
-    # get all order by latest
-    Quote.find(:all,{:order=>"created_at DESC",:limit=>100,:conditions=>["created_at > ?", add_hours(DateTime.now,-3*24)]}).each do |quote|
-      puts "hour: #{quote.created_at.hour} \tminute: #{quote.created_at.min}"
-    end
-
-  end
-
-
 end

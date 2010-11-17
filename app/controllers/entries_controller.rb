@@ -1,39 +1,63 @@
+require 'core'
+
 class EntriesController < ApplicationController
   before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
+  include Core
 
   def index
 
     @title = "Stocks In Play"
-    entries = Entry.find_last_seven_days()
-    @symbols = Hash.new
-    for entry in entries
-      if @symbols[entry.symbol].nil?
-        hash = Hash.new
-        set = Set.new
-        set.add(entry.source.id)
-        hash[:weight] = entry.source.weight
-        hash[:count] = 1
-        hash[:source_count] = set
-        @symbols[entry.symbol] = hash
-      else
-        hash = @symbols[entry.symbol]
-        hash[:weight] = hash[:weight] + entry.source.weight
-        hash[:count] = hash[:count] + 1;
-        set = hash[:source_count]
-        set.add(entry.source.id)
-        hash[:source_client] = set
 
+    # get the latest insert,
+    latest_factor = Factor.find(:first,:order=>"created_at DESC")
+    # get everything within one hour of that one
+    factors = Factor.find(:all,:conditions=>["created_at > ?", add_hours(latest_factor.created_at, -1)])
+
+    # create a set, replacing only if timestamp is later
+    @symbols = []
+    factor_set = {}
+    factors.each do |_factor|
+      if !factor_set[_factor.symbol]
+        factor_set[_factor.symbol] = _factor
+        @symbols << {:factor=>_factor}
       end
     end
 
-    # sort by highest factor
+    # sort the symbols by the most recent factor
     @symbols = @symbols.sort { |a,b|
-      b[1][:weight] <=> a[1][:weight]
+      b[:factor].factor <=> a[:factor].factor
     }
 
+    # keep the highest
     @symbols = @symbols[0..45]
 
-    @recent_entries = Entry.find(:all,:order=>"sent_at DESC",:limit=>45)
+
+    # get all the recent mentions, and count their sources
+
+    entries = Entry.find_last_seven_days()
+    # construct all the symbols into a hash
+    @symbols_hash = {}
+    @symbols.each {|symbol| @symbols_hash[symbol[:factor].symbol] = symbol}
+
+    for entry in entries
+      hash                        = @symbols_hash[entry.symbol]
+      hash = {} unless !hash.nil?
+      hash[:count]                = hash[:count].nil? ? 1 : hash[:count] + 1
+      set                         = hash[:source_count]
+      set = Set.new unless !set.nil?
+      set.add(entry.source.id)
+      hash[:source_count]         = set
+      @symbols_hash[entry.symbol] = hash
+    end
+
+    #now put them back into an array
+    @symbols.each do |symbol|
+      symbol[:count] = @symbols_hash[symbol[:factor].symbol][:count]
+      symbol[:source_count] = @symbols_hash[symbol[:factor].symbol][:source_count]
+    end
+
+
+    @recent_entries = Entry.find(:all,:select=>"symbol,source_id",:order=>"sent_at DESC",:limit=>45)
   end
 
   
@@ -92,7 +116,7 @@ class EntriesController < ApplicationController
     # get all the entries for this
 
 
-    prices = Quote.find_all_by_symbol(@symbol,:order=>"market_time",:conditions=>
+    prices = Quote.find_all_by_symbol(@symbol,:select=>"market_time,last_price",:order=>"market_time",:conditions=>
       ["market_time > ?",DateTime.now - @search_time])
 
     prices_arr = Array.new
@@ -132,10 +156,22 @@ class EntriesController < ApplicationController
         sell_arr.push([entry.sent_at_on_graph.to_f.to_i * 1000,entry.source.weight])
       end
     end
+
+
+
+    factors = []
+    # new stock factor line
+    (0..@search_time).reverse_each do  | days_ago|
+      time    = add_hours(Time.now, -24 * days_ago)
+      _factor = factor(@symbol, time)
+      puts _factor
+      factors << [time.to_f.to_i*1000,_factor]
+    end
+
+    @factors_json = factors.to_json
     @entries_json = entries_arr.to_json
     @buys_json = buy_arr.to_json
     @sells_json = sell_arr.to_json
-
   end
 
   def email

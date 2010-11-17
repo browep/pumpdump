@@ -28,10 +28,10 @@
 
               <tr class="front-list ">
                 <td>
-                  <span class="home-symbol home-symbol-<%= count %>"><%= link_to symbol[0], :action=>"symbol", :id=>symbol[0] %></span></td>
-                <td class="data-column home-data-<%= count %>"><%= symbol[1][:weight].to_i %></td>
-                <td class="data-column home-data-<%= count %>"><%= symbol[1][:count] %></td>
-                <td class="data-column home-data-<%= count %>"><%= symbol[1][:source_count].size %></td>
+                  <span class="home-symbol home-symbol-<%= count %>"><%= link_to symbol[:factor].symbol, :action=>"symbol", :id=>symbol[:factor].symbol %></span></td>
+                <td class="data-column home-data-<%= count %>"><%= symbol[:factor].factor %></td>
+                <td class="data-column home-data-<%= count %>"><%= symbol[:count] %></td>
+                <td class="data-column home-data-<%= count %>"><%= symbol[:source_count].size %></td>
               </tr>
 
               <% count+=1 %>

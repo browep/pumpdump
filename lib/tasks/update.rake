@@ -18,12 +18,9 @@ namespace :update do
     do_symbol
   end
 
-  task :no_env do
-    puts "no env"
-  end
-
-  task :env => :environment do
-    puts "env"
+  task :factor => :environment do
+    include Core
+    update_all_factors
   end
 
 

@@ -62,8 +62,8 @@ $(function () {
                 yaxis: 2  ,
             },
             {
-                data: <%= @entries_json %>,
-                bars: { show: true }  ,
+                data: <%= @factors_json %>,
+                lines: { show: true,fill: true }  ,
             },
             {
                 data: <%= @buys_json %>,
