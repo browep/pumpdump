@@ -21,6 +21,13 @@ class BadSymbolsController < ApplicationController
       puts "destroying #{entry.id}"
       entry.destroy
     end
+
+    factors = Factor.find_all_by_symbol(bad_symbol)
+    puts "removing factors"
+    factors.each do |_factor|
+      puts "destroying #{_factor.id}"
+      _factor.destroy
+    end
   end
 
   def create
