@@ -73,7 +73,9 @@ module Update
 
     begin
       url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
-      body = fetch(url).body
+      puts url
+      resp = fetch(url)
+      body = resp.body
       body = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
 
       result = JSON.parse(body)
@@ -89,6 +91,7 @@ module Update
     begin
       #google failed, try yahoo
       url        = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbol}&f=l1"
+      puts url
       body       = fetch(url).body
       last_price = body.to_f
       # t

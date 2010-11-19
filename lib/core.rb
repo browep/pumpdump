@@ -6,23 +6,22 @@ module Core
   include Util
 
   def factor(symbol,curr_time=Time.now)
-    puts
     sql = "SELECT entries.created_at,sources.weight FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(curr_time)}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
+#    puts sql
     res = Entry.connection.execute(sql)
 
     curr_sf = 0
     res.each do |entry|
       time = Time.local(*ParseDate.parsedate(entry[0]))
-      calculated_factor = (entry[1].to_i * (1/((curr_time - time))))
-#      puts "\t#{calculated_factor}"
-      if calculated_factor > 1000
-        this = 0
-      end
+      calculated_factor = (entry[1].to_i * (1/((curr_time - time + secs_in_day)/secs_in_day)))
       curr_sf = curr_sf + calculated_factor
     end
 
+    if curr_sf < 0
+      puts "negative #{curr_sf}"
+    end
 
-    (curr_sf * secs_in_day).to_i
+    curr_sf.to_i
 
   end
 
@@ -53,6 +52,8 @@ module Core
 
     time = Time.now
 
+    factors = {}
+
     threads = []
     1.times do |num|
       threads << Thread.new do
@@ -63,6 +64,7 @@ module Core
             updated_factor = update_factor(symbol,time)
             if updated_factor
               puts "#{symbol}: \t#{updated_factor.factor}"
+              factors[symbol] = updated_factor.factor
             else
               puts "#{symbol} had a problem"
             end
@@ -77,6 +79,12 @@ module Core
     threads.each do |t|
       t.join
     end
+
+    factors = factors.sort {|a,b| a[1]<=>b[1]}   #=> [["c", 10], ["a", 20], ["b", 30]]
+    puts factors.to_yaml
+
+
+
   end
 
 end

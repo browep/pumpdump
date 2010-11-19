@@ -11,13 +11,14 @@ class EntriesController < ApplicationController
     # get the latest insert,
     latest_factor = Factor.find(:first,:order=>"created_at DESC")
     # get everything within one hour of that one
-    factors = Factor.find(:all,:conditions=>["created_at > ?", add_hours(latest_factor.created_at, -1)])
+    created_at_limit = add_hours(latest_factor.created_at, -1)
+    factors = Factor.find(:all,:conditions=>["created_at > ?", created_at_limit],:order=>"created_at DESC")
 
     # create a set, replacing only if timestamp is later
     @symbols = []
     factor_set = {}
     factors.each do |_factor|
-      if !factor_set[_factor.symbol]
+      if factor_set[_factor.symbol].nil?
         factor_set[_factor.symbol] = _factor
         @symbols << {:factor=>_factor}
       end
@@ -53,7 +54,8 @@ class EntriesController < ApplicationController
     #now put them back into an array
     @symbols.each do |symbol|
       symbol[:count] = @symbols_hash[symbol[:factor].symbol][:count]
-      symbol[:source_count] = @symbols_hash[symbol[:factor].symbol][:source_count]
+      source_hash           = @symbols_hash[symbol[:factor].symbol][:source_count]
+      symbol[:source_count] = source_hash || {}
     end
 
 
@@ -167,6 +169,17 @@ class EntriesController < ApplicationController
       puts _factor
       factors << [time.to_f.to_i*1000,_factor]
     end
+
+    # mixin all factors found in the db
+    earliest_factor_time    = add_hours(Time.now, -24 * @search_time)
+    db_factors = Factor.find_all_by_symbol(@symbol,:conditions=>["created_at > ? ",time_to_sql_timestamp(earliest_factor_time)])
+    db_factors.each do |_factor|
+      factors << [(_factor.created_at.to_f.to_i * 1000),_factor.factor]
+    end
+
+    factors.sort! { |a,b| a[0]<=>b[0]}
+
+
 
     @factors_json = factors.to_json
     @entries_json = entries_arr.to_json
