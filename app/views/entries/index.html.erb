@@ -44,7 +44,7 @@
         <% for entry in @recent_entries %>
 
             <p><%= "#{entry.source.name} (#{entry.source.weight.to_i})" %>
-              -> <%= link_to entry.symbol, :action=>"symbol", :id=>entry.symbol %></p>
+              -> <%= link_to entry.symbol, :action=>"symbol", :id=>entry.symbol %><span class="de-emph"> (<%= format_datetime(entry.sent_at) %>)</span> </p>
 
         <% end %>
       </td>

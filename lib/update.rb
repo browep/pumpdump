@@ -11,11 +11,15 @@ module Update
   include Util
 
 
-  def fetch(uri_str, limit = 10)
+  def fetch(uri_str, proxy=false,limit = 10)
     # You should choose better exception.
     raise ArgumentError, 'HTTP redirect too deep' if limit == 0
-
-    response = Net::HTTP.get_response(URI.parse(uri_str))
+    response = nil
+    if proxy
+      response = Net::HTTP.Proxy("124.207.162.83","80").get_response(URI.parse(uri_str))
+    else
+      response = Net::HTTP.get_response(URI.parse(uri_str))
+    end
     case response
       when Net::HTTPSuccess then
         response
@@ -95,9 +99,26 @@ module Update
       body       = fetch(url).body
       last_price = body.to_f
       # t
-      if last_price == 0
-        return nil
-      else return last_price
+      if last_price != 0
+        return last_price
+      end
+    rescue => e
+      puts symbol
+      puts e.inspect
+    end
+
+    # try a proxied google call
+    begin
+      url    = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
+      puts url
+      resp   = fetch(url,true)
+      body   = resp.body
+      body   = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
+
+      result = JSON.parse(body)
+      price  = result["l"]
+      if !price.nil? && price.to_f
+        return price.to_f
       end
     rescue => e
       puts symbol

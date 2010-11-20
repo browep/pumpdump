@@ -59,7 +59,7 @@ class EntriesController < ApplicationController
     end
 
 
-    @recent_entries = Entry.find(:all,:select=>"symbol,source_id",:order=>"sent_at DESC",:limit=>45)
+    @recent_entries = Entry.find(:all,:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
   end
 
   
@@ -121,6 +121,13 @@ class EntriesController < ApplicationController
     prices = Quote.find_all_by_symbol(@symbol,:select=>"market_time,last_price",:order=>"market_time",:conditions=>
       ["market_time > ?",DateTime.now - @search_time])
 
+
+    # get the earliest price, we need to make sure we get a factor at that time to fill out the graph
+    earliest_graph_item = nil
+    if !prices.nil? && prices.size > 0
+      earliest_graph_item = prices[0].market_time_with_zone
+    end
+
     prices_arr = Array.new
     @min_price = nil
     for price in prices
@@ -143,6 +150,11 @@ class EntriesController < ApplicationController
     @entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
       ["sent_at > ?",DateTime.now - @search_time])
 
+    # get the earliest entry, we need to make sure we get a factor for this to fill out the graph
+    if earliest_graph_item.nil? || (!@entries.nil? && @entries.size() > 0 && earliest_graph_item > @entries[0].sent_at_on_graph)
+       earliest_graph_item = @entries[0].sent_at_on_graph
+    end
+
     entries_arr = []
     buy_arr = []
     sell_arr =[]
@@ -163,8 +175,12 @@ class EntriesController < ApplicationController
 
     factors = []
     # new stock factor line
-    (0..@search_time).reverse_each do  | days_ago|
-      time    = add_hours(Time.now, -24 * days_ago)
+    # do one for every day, plus the earliest entry or quote
+    factor_times = [earliest_graph_item]
+    (0..@search_time).reverse_each {|days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
+
+    # do a factor for each
+    factor_times.each do |time|
       _factor = factor(@symbol, time)
       puts _factor
       factors << [time.to_f.to_i*1000,_factor]
