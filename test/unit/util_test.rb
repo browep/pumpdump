@@ -93,5 +93,8 @@ class UtilTester < Test::Unit::TestCase
   end
 
 
+  def test_is_during_market_hours
+    assert !during_market_hours?(DateTime.now,true)
+  end
 
 end
