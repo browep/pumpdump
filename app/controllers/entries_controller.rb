@@ -176,14 +176,14 @@ class EntriesController < ApplicationController
     factors = []
     # new stock factor line
     # do one for every day, plus the earliest entry or quote
-    factor_times = [earliest_graph_item]
+    factor_times = []
     (0..@search_time).reverse_each {|days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
 
     # do a factor for each
     factor_times.each do |time|
       _factor = factor(@symbol, time)
       puts _factor
-      factors << [time.to_f.to_i*1000,_factor]
+      factors << [add_hours(time,-4).to_f.to_i*1000,_factor]
     end
 
     # mixin all factors found in the db

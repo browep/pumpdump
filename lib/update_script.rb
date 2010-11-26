@@ -119,7 +119,7 @@ db_config,app_config = load_config
 
 market_time = add_hours(DateTime.now, @options[:market_offset])
 puts "market time:#{market_time}"
-if app_config[:observe_market_time] && !during_trading_time?(market_time,true)
+if app_config[:observe_market_time] && !during_trading_time?(market_time,true,app_config[:holidays])
   puts "not during market hours"
   exit(0)
 end

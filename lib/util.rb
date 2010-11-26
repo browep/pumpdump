@@ -27,12 +27,12 @@ module Util
 
 
   def during_market_hours?(datetime,verbose=false)
-    if verbose
+#    if verbose
       puts "day: #{datetime.day()}, hour: #{datetime.hour()}, minute: #{datetime.min()}"
-    end
+#    end
     # go through each market holiday, if it matches then not in market hours
     holiday_str = APP_CONFIG[:holidays]
-    puts holiday_str
+    puts "holiday_str: #{holiday_str}"
     if !holiday_str.nil?
       holidays = holiday_str.split(",")
       current_day_str = "#{datetime.year}#{datetime.month}#{datetime.day}"
@@ -44,6 +44,7 @@ module Util
         end
       end
     end
+    puts "not in one of the holidays"
     if (datetime.day() <= 5 && (datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30) && datetime.hour() < 16) )
       return true
     end
@@ -114,13 +115,28 @@ module Util
 
   end
 
-  def during_trading_time?( datetime,verbose=false)
+  def during_trading_time?( datetime,verbose=false,holiday_str=nil)
     if verbose then
       puts "day: #{datetime.cwday()}"
       puts "hour: #{datetime.hour()}"
       puts "minute: #{datetime.min()}"
       puts "zone: #{datetime.zone()}"
     end
+
+    puts "holiday_str: #{holiday_str}"
+    if !holiday_str.nil?
+      holidays = holiday_str.split(",")
+      current_day_str = "#{datetime.year}#{datetime.month}#{datetime.day}"
+      puts "current day str: #{current_day_str}"
+      holidays.each do |holiday|
+        if holiday == current_day_str
+          puts "current date matches holiday #{holiday}, ending"
+          return false
+        end
+      end
+    end
+    puts "not in one of the holidays"
+
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 
   end
