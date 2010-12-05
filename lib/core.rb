@@ -6,19 +6,29 @@ module Core
   include Util
 
   def factor(symbol,curr_time=Time.now)
-    sql = "SELECT entries.created_at,sources.weight FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(curr_time)}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
+    sql = "SELECT entries.created_at,sources.weight,sources.id FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(curr_time)}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
 #    puts sql
     res = Entry.connection.execute(sql)
+
+    # this will be a set of the sources
+    sources = {}
 
     curr_sf = 0
     res.each do |entry|
       time = Time.local(*ParseDate.parsedate(entry[0]))
-      calculated_factor = (entry[1].to_i * (1/((curr_time - time + secs_in_day)/secs_in_day)))
+      pro_rate_factor   = (1/((curr_time - time + secs_in_day)/secs_in_day))
+      calculated_factor = (entry[1].to_i * pro_rate_factor)
       curr_sf = curr_sf + calculated_factor
+      if(sources[entry[2]].nil?)
+        sources[entry[2]] = pro_rate_factor
+      elsif sources[entry[2]] < pro_rate_factor
+        sources[entry[2]] = pro_rate_factor
+      end
     end
 
-    if curr_sf < 0
-      puts "negative #{curr_sf}"
+    #increase the factor for each different source, maybe by 20% for each one.
+    sources.each do |key,value|
+      curr_sf = curr_sf + (curr_sf * value)
     end
 
     curr_sf.to_i
@@ -55,7 +65,7 @@ module Core
     factors = {}
 
     threads = []
-    1.times do |num|
+    3.times do |num|
       threads << Thread.new do
         while !q.empty?
           begin
@@ -80,7 +90,7 @@ module Core
       t.join
     end
 
-    factors = factors.sort {|a,b| a[1]<=>b[1]}   #=> [["c", 10], ["a", 20], ["b", 30]]
+    factors = factors.sort {|a,b| a[1]<=>b[1]}
     puts factors.to_yaml
 
 

@@ -177,7 +177,9 @@ class EntriesController < ApplicationController
     # new stock factor line
     # do one for every day, plus the earliest entry or quote
     factor_times = []
-    (0..@search_time).reverse_each {|days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
+    times_for_factors = (0..@search_time).to_a
+    factor_times << earliest_graph_item
+    times_for_factors.reverse_each {|days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
 
     # do a factor for each
     factor_times.each do |time|
@@ -187,6 +189,7 @@ class EntriesController < ApplicationController
     end
 
     # mixin all factors found in the db
+    # only get ones that are at least newer than the oldest factor we just computed
     earliest_factor_time    = add_hours(Time.now, -24 * @search_time)
     db_factors = Factor.find_all_by_symbol(@symbol,:conditions=>["created_at > ? ",time_to_sql_timestamp(earliest_factor_time)])
     db_factors.each do |_factor|
