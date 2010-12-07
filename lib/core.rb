@@ -6,7 +6,7 @@ module Core
   include Util
 
   def factor(symbol,curr_time=Time.now)
-    sql = "SELECT entries.created_at,sources.weight,sources.id FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(curr_time)}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
+    sql = "SELECT entries.created_at,sources.weight,sources.id FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(add_hours(curr_time,5))}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
 #    puts sql
     res = Entry.connection.execute(sql)
 

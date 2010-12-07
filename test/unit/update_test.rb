@@ -20,7 +20,7 @@ class UpdateTester < Test::Unit::TestCase
 
   def test_factor
     (0..10).reverse_each do |days_ago|
-      _factor = factor("INTK",add_hours(Time.now, -24 * days_ago))
+      _factor = factor("ACTC",add_hours(Time.now, -24 * days_ago))
       puts _factor
     end
   end

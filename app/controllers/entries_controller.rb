@@ -183,8 +183,7 @@ class EntriesController < ApplicationController
 
     # do a factor for each
     factor_times.each do |time|
-      _factor = factor(@symbol, time)
-      puts _factor
+      _factor = factor(@symbol, add_hours(time,-4))
       factors << [add_hours(time,-8).to_f.to_i*1000,_factor]
     end
 
@@ -193,7 +192,7 @@ class EntriesController < ApplicationController
     earliest_factor_time    = add_hours(Time.now, -24 * @search_time)
     db_factors = Factor.find_all_by_symbol(@symbol,:conditions=>["created_at > ? ",time_to_sql_timestamp(earliest_factor_time)])
     db_factors.each do |_factor|
-      factors << [(_factor.created_at.to_f.to_i * 1000),_factor.factor]
+#      factors << [(add_hours(_factor.created_at,-4).to_f.to_i * 1000),_factor.factor]
     end
 
     factors.sort! { |a,b| a[0]<=>b[0]}
