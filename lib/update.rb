@@ -4,12 +4,11 @@ require 'simple-rss'
 require 'open-uri'
 require "util"
 require 'net/imap'
-require 'tmail'
+
 
 module Update
 
   include Util
-
 
   def fetch(uri_str, proxy=false,limit = 10)
     # You should choose better exception.
@@ -30,50 +29,47 @@ module Update
     end
   end
 
+#
+#  def do_quote
+#    # create new updater
+#    updater = QuoteUpdater.new({})
+#    updater.start
+#
+#  end
 
-  def do_quote
-    if during_trading_time?(DateTime.now().in_time_zone('Eastern Time (US & Canada)')) || APP_CONFIG[:observe_market_time] == false
-      # get all the symbols for the past 7 days
-      symbols = symbols_in_play()
+  # takes a list of stock symbols, returns a map of the ones it can
+  def get_quote(symbols)
 
-      puts "symbols: #{symbols.to_yaml}"
+    # create the map
+    quotes = {}
+    symbols.each {|symbol| quotes[symbol] = 0}
 
-      # go over each symbol, try and get a quote
-      symbols_added = []
-      not_symbols_added = []
-      for symbol in symbols
-        price = get_quote(symbol)
-        if !price.nil?
-          quote = Quote.new({:symbol=>symbol, :last_price=>price, :market_time=>DateTime.now})
-          if quote.save
-            symbols_added << symbol
-          else
-            not_symbols_added << symbol
-          end
-        else
-          not_symbols_added << symbol
-        end
 
+    begin
+      url = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbols.join("+")}&f=l1"
+      puts url
+      prices_str = fetch(url).body.split(" ")
+      for n in 0..symbols.size-1
+        quotes[symbols[n]] = prices_str[n].to_f
       end
-
-      puts "#{DateTime.now.to_s}: added #{symbols_added.size} quotes: #{symbols_added.join(", ")}"
-      puts "not added: #{not_symbols_added.join(", ")}" unless not_symbols_added.size == 0
-      not_symbols_added.each do |symbol|
-        begin
-          if BadSymbol.find_all_by_symbol(symbol).size == 0
-            _bad_symbol = BadSymbol.new({:symbol=>symbol, :verified=>false})
-            _bad_symbol.save
-          end
-        rescue => e
-        end
-      end
-    else
-      puts "#{DateTime.now.to_s} not during trading hours."
-
+    rescue => e
+      puts symbol
+      puts e.inspect
     end
+
+    quotes.each_pair do |symbol,price|
+      # try individual for each one of these
+      if price.nil? || price == 0
+        quotes[symbol] = get_price_from_google(symbol)
+      end
+    end
+
+    return quotes
+
   end
 
-  def get_quote(symbol)
+  def get_price_from_google(symbol)
+
 
     begin
       url = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
@@ -91,42 +87,26 @@ module Update
       puts symbol
       puts e.inspect
     end
-
-    begin
-      #google failed, try yahoo
-      url        = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbol}&f=l1"
-      puts url
-      body       = fetch(url).body
-      last_price = body.to_f
-      # t
-      if last_price != 0
-        return last_price
-      end
-    rescue => e
-      puts symbol
-      puts e.inspect
-    end
-
-    # try a proxied google call
-    begin
-      url    = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
-      puts url
-      resp   = fetch(url,true)
-      body   = resp.body
-      body   = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
-
-      result = JSON.parse(body)
-      price  = result["l"]
-      if !price.nil? && price.to_f
-        return price.to_f
-      end
-    rescue => e
-      puts symbol
-      puts e.inspect
-    end
-
-    nil
-
+#
+#    # try a proxied google call
+#    begin
+#      url    = "http://finance.google.com/finance/info?client=ig&q=#{symbol}"
+#      puts url
+#      resp   = fetch(url,true)
+#      body   = resp.body
+#      body   = body.gsub("\/\/", "").gsub("[", "").gsub("]", "")
+#
+#      result = JSON.parse(body)
+#      price  = result["l"]
+#      if !price.nil? && price.to_f
+#        return price.to_f
+#      end
+#    rescue => e
+#      puts symbol
+#      puts e.inspect
+#    end
+    #return 0, this is the "unfound price""
+    0
   end
 
 
@@ -274,10 +254,18 @@ module Update
         host = envelope.from[0].host
 
         from_address = "#{mailbox}@#{host}"
-        msg = $imap.fetch(message_id,'RFC822')[0].attr['RFC822']
-        mail = TMail::Mail.parse(msg)
-        body = mail.body
+        body = $imap.fetch(message_id,'BODY[TEXT]')[0].attr['BODY[TEXT]']
 
+        begin
+          #split on charset
+          matcher = body.match(/text\/html\; charset=ISO-\d\d\d\d-1(.*)--[\d\w]{2}/m)
+          if matcher && matcher[1]
+            body = matcher[1]
+          end
+
+        rescue => e
+          puts e.backtrace
+        end
 
         map[:from_address] = from_address
         map[:body] = body

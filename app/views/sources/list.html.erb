@@ -14,7 +14,7 @@
       <td><%=h source.twitter %></td>
       <td><%=h source.weight %></td>
       <td><%= link_to "Show", source %></td>
-      <td><%= link_to "Edit", edit_source_path(source) %></td>
+      <td><%= link_to "Edit", :action=>"edit",:id=>source %></td>
       <td><%= link_to "Destroy", source, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>

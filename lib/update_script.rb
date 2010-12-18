@@ -2,8 +2,9 @@
 require "rubygems"
 require "mysql"
 require "yaml"
-require "update"
-require "util"
+
+require File.join(File.dirname(__FILE__), "update")
+require File.join(File.dirname(__FILE__), "util")
 require "json"
 require "thread"
 require 'optparse'

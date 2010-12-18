@@ -131,7 +131,7 @@ class EntriesController < ApplicationController
     prices_arr = Array.new
     @min_price = nil
     for price in prices
-      prices_arr.push([price.market_time_with_zone.to_f.to_i * 1000, price.last_price])
+      prices_arr.push([price.market_time_with_zone.to_f.to_i * 1000, price.last_price.to_f])
       if @min_price.nil? || @min_price > price.last_price
         @min_price = price.last_price
       end

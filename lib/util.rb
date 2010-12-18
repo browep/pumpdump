@@ -25,7 +25,7 @@ module Util
 
   end
 
-
+  # DEPRECATED
   def during_market_hours?(datetime,verbose=false)
 #    if verbose
       puts "day: #{datetime.day()}, hour: #{datetime.hour()}, minute: #{datetime.min()}"
@@ -117,25 +117,25 @@ module Util
 
   def during_trading_time?( datetime,verbose=false,holiday_str=nil)
     if verbose then
-      puts "day: #{datetime.cwday()}"
-      puts "hour: #{datetime.hour()}"
-      puts "minute: #{datetime.min()}"
-      puts "zone: #{datetime.zone()}"
+      Rails.logger.debug "day: #{datetime.cwday()}"
+      Rails.logger.debug "hour: #{datetime.hour()}"
+      Rails.logger.debug "minute: #{datetime.min()}"
+      Rails.logger.debug "zone: #{datetime.zone()}"
     end
 
-    puts "holiday_str: #{holiday_str}"
+    Rails.logger.debug "holiday_str: #{holiday_str}"
     if !holiday_str.nil?
       holidays = holiday_str.split(",")
       current_day_str = "#{datetime.year}#{datetime.month}#{datetime.day}"
-      puts "current day str: #{current_day_str}"
+      Rails.logger.debug "current day str: #{current_day_str}"
       holidays.each do |holiday|
         if holiday == current_day_str
-          puts "current date matches holiday #{holiday}, ending"
+          Rails.logger.debug "current date matches holiday #{holiday}, ending"
           return false
         end
       end
     end
-    puts "not in one of the holidays"
+    Rails.logger.info "not in one of the holidays"
 
     datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
 

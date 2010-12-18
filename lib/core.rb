@@ -1,6 +1,6 @@
-require 'parsedate'
+require "rubygems"
 require "thread"
-
+require "util"
 module Core
 
   include Util
@@ -15,7 +15,7 @@ module Core
 
     curr_sf = 0
     res.each do |entry|
-      time = Time.local(*ParseDate.parsedate(entry[0]))
+      time = entry[0]
       pro_rate_factor   = (1/((curr_time - time + secs_in_day)/secs_in_day))
       calculated_factor = (entry[1].to_i * pro_rate_factor)
       curr_sf = curr_sf + calculated_factor
@@ -28,7 +28,7 @@ module Core
 
     #increase the factor for each different source, maybe by 20% for each one.
     sources.each do |key,value|
-      curr_sf = curr_sf + (curr_sf * value)
+      curr_sf = curr_sf + (curr_sf * 0.2)
     end
 
     curr_sf.to_i
