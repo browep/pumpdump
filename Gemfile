@@ -14,6 +14,7 @@ gem 'tmail'
 gem 'test-unit'
 gem 'eventmachine'
 gem 'em-http-request'
+gem 'thin'
 #gem 'parsedate'
 
 # Use unicorn as the web server
