@@ -83,7 +83,7 @@ class EntriesController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
     @entry = Entry.find(params[:id])
     @entry.destroy
@@ -135,11 +135,6 @@ class EntriesController < ApplicationController
     # get all the entries
     @entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
       ["sent_at > ?",DateTime.now - @search_time])
-
-    # get the earliest entry, we need to make sure we get a factor for this to fill out the graph
-    if earliest_graph_item.nil? || (!@entries.nil? && @entries.size() > 0 && earliest_graph_item > @entries[0].sent_at_on_graph)
-       earliest_graph_item = @entries[0].sent_at_on_graph
-    end
 
     entries_arr = []
     buy_arr = []

@@ -12,7 +12,7 @@ namespace :update do
   task :quote => :environment do
 
     # create new updater
-    Rails.logger.info "START updating quotes"
+    puts "START updating quotes"
     start_time  = Time.now
 
     updater = QuoteUpdater.new({})
@@ -21,8 +21,8 @@ namespace :update do
     end_time = Time.now
 
     time_delta = end_time - start_time
-    Rails.logger.info "Updating quotes took #{time_delta} seconds"
-    Rails.logger.info "END updating quotes"
+    puts "Updating quotes took #{time_delta} seconds"
+    puts "END updating quotes"
 
 
   end

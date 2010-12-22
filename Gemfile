@@ -5,7 +5,10 @@ gem 'rails', '3.0.3'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+gem 'mongrel', '>= 1.2.0.pre2'
+gem 'mongrel_cluster'
 gem 'mysql2'
+gem 'dispatcher'
 gem 'simple-rss'
 gem 'tmail'
 gem 'test-unit'

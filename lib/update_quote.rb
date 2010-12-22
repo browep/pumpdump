@@ -27,8 +27,8 @@ class QuoteUpdater
       @queue << entry.symbol
       @not_done << entry.symbol
     }
-    Rails.logger.debug "getting quotes for #{@queue.to_yaml}"
-    Rails.logger.debug "queue size: #{@queue.size}"
+    puts "getting quotes for #{@queue.to_yaml}"
+    puts "queue size: #{@queue.size}"
     @orig_total = @queue.size
   end
 
@@ -64,10 +64,10 @@ class QuoteUpdater
   def finish(symbol,result)
     @not_done.delete(symbol)
     if @not_done.size < 10
-      Rails.logger.debug "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
+      puts "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
     end
     if @not_done.empty?
-      Rails.logger.debug "stopping EM"
+      puts "stopping EM"
       EventMachine::stop_event_loop
     end
   end
