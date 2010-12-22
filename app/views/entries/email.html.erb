@@ -1,6 +1,6 @@
 <div class="email-header">From:</div>
  <%= @entry.source.name %> ( <%= @entry.source.address %> )
 <div class="email-header">Subject:</div>
-<%= @entry.subject %>
+<%= @entry.email_content.subject %>
 <div class="email-header">Body:</div>
- <%= raw  @entry.body %>
+ <%= raw  @entry.email_content.body %>

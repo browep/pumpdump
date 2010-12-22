@@ -38,13 +38,27 @@ namespace :update do
     update_all_factors
   end
 
-#  def time_to_sql_timestamp(time)
-#    (time + 60 * 60 * @options[:offset]).strftime("%Y-%m-%d %H:%M:%S")
-#  end
-
   task :cleanse_old => :environment do
-    Quote.connection.execute("DELETE from quotes where market_time < #{time_to_sql_timestamp(add_days(DateTime.now,-30))}")
+    include Util
+    sql = "DELETE from quotes where market_time < '#{time_to_sql_timestamp(add_days(DateTime.now, -40))}'"
+    Rails.logger.info sql
+    Quote.connection.execute(sql)
   end
+
+  task :cleanse_factors => :environment do
+    include Util
+    sql = "TRUNCATE TABLE factors"
+    Rails.logger.info sql
+    Factor.connection.execute(sql)
+  end
+
+  task :regen_factors => :environment do
+    include Update
+    regen_factors
+  end
+
+
+
 
 
 

@@ -40,6 +40,7 @@ module Core
     _factor = factor(symbol,curr_time)
     # save that factor
     _factor = Factor.new({:symbol=>symbol,:factor=>_factor})
+    _factor.created_at = curr_time
     if _factor.save
       return _factor
     end
@@ -94,7 +95,21 @@ module Core
     puts factors.to_yaml
 
 
+  end
 
+  def do_migrations
+    entries = Entry.all(:conditions=>["message_type =? ",1],:order=>"id")
+    Rails.logger.info "num entries"
+    entries.each do |entry|
+      if  entry.email_content.nil? && !entry.body.nil? && !entry.subject.nil?
+        Rails.logger.info "Migrating entry:#{entry.id}"
+        email_content       = EmailContent.new(:body=>entry.body, :subject=>entry.subject)
+        email_content.entry = entry
+        email_content.save
+      else
+        Rails.logger.info "NOT Migrating entry:#{entry.id}"
+      end
+    end
   end
 
 end

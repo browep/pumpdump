@@ -1,3 +1,4 @@
+require 'core'
 namespace :fix do
 
   #times are old fix them
@@ -6,7 +7,7 @@ namespace :fix do
 
     # get all quotes that are more than 7 days old, delete them
 
-    quotes = Quote.find(:all, :order=>"market_time", :conditions=>
+    quotes = Quote.all(:order=>"market_time", :conditions=>
               ["market_time > ? AND market_time < ?", DateTime.now - 7, DateTime.now - 1] )
 
     quotes.each do |quote|
@@ -73,6 +74,12 @@ namespace :fix do
     end
 
 
+  end
+
+
+  task :migrate_email => :environment do
+    include Core
+    do_migrations
   end
 
 

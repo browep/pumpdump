@@ -4,7 +4,7 @@ require 'simple-rss'
 require 'open-uri'
 require "util"
 require 'net/imap'
-
+require 'core'
 
 module Update
 
@@ -288,6 +288,45 @@ module Update
 
     puts "found #{emails.length} emails for #{source_address}"
     return emails
+
+  end
+
+
+  def regen_factors
+    include Core
+    q = Queue.new
+
+
+    Entry.find_distinct_in_last_30_days.each do |entry|
+      q.push(entry.symbol)
+    end
+
+
+    puts "q:#{q.size}"
+
+    threads = []
+    3.times do |num|
+      threads << Thread.new do
+        while !q.empty?
+          begin
+            symbol = q.pop
+            time   = Time.now
+            cutoff = add_days(Time.now, -30)
+            while time > cutoff
+              update_factor(symbol, time)
+              time = time - 10.minutes
+            end
+          rescue => e
+            puts e.message
+            puts e.backtrace
+          end
+        end
+      end
+    end
+
+    threads.each do |t|
+      t.join
+    end
 
   end
 

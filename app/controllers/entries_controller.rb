@@ -9,10 +9,10 @@ class EntriesController < ApplicationController
     @title = "Stocks In Play"
 
     # get the latest insert,
-    latest_factor = Factor.find(:first,:order=>"created_at DESC")
+    latest_factor = Factor.first(:order=>"created_at DESC")
     # get everything within one hour of that one
     created_at_limit = add_hours(latest_factor.created_at, -1)
-    factors = Factor.find(:all,:conditions=>["created_at > ?", created_at_limit],:order=>"created_at DESC")
+    factors = Factor.all(:conditions=>["created_at > ?", created_at_limit],:order=>"created_at DESC")
 
     # create a set, replacing only if timestamp is later
     @symbols = []
@@ -20,46 +20,32 @@ class EntriesController < ApplicationController
     factors.each do |_factor|
       if factor_set[_factor.symbol].nil?
         factor_set[_factor.symbol] = _factor
-        @symbols << {:factor=>_factor}
+        @symbols << {:factor=>_factor.factor,:symbol=>_factor.symbol}
       end
     end
 
     # sort the symbols by the most recent factor
     @symbols = @symbols.sort { |a,b|
-      b[:factor].factor <=> a[:factor].factor
+      b[:factor] <=> a[:factor]
     }
 
     # keep the highest
     @symbols = @symbols[0..45]
 
-
-    # get all the recent mentions, and count their sources
-
-    entries = Entry.find_last_seven_days()
-    # construct all the symbols into a hash
-    @symbols_hash = {}
-    @symbols.each {|symbol| @symbols_hash[symbol[:factor].symbol] = symbol}
-
-    for entry in entries
-      hash                        = @symbols_hash[entry.symbol]
-      hash = {} unless !hash.nil?
-      hash[:count]                = hash[:count].nil? ? 1 : hash[:count] + 1
-      set                         = hash[:source_count]
-      set = Set.new unless !set.nil?
-      set.add(entry.source.id)
-      hash[:source_count]         = set
-      @symbols_hash[entry.symbol] = hash
-    end
-
-    #now put them back into an array
+    # get entries for last 30 days, and their distinct source count
     @symbols.each do |symbol|
-      symbol[:count] = @symbols_hash[symbol[:factor].symbol][:count]
-      source_hash           = @symbols_hash[symbol[:factor].symbol][:source_count]
-      symbol[:source_count] = source_hash || {}
+      sql  = "SELECT COUNT(DISTINCT source_id) from entries where symbol = '#{symbol[:symbol]}' AND sent_at > '#{time_to_sql_timestamp(add_days(DateTime.now,-30))}'"
+      resp = Entry.connection.execute(sql)
+      symbol[:source_count] = resp.to_a[0][0]
+      sql  = "SELECT COUNT(*) from entries where symbol = '#{symbol[:symbol]}' AND sent_at > '#{time_to_sql_timestamp(add_days(DateTime.now,-30))}'"
+      resp = Entry.connection.execute(sql)
+      symbol[:count] = resp.to_a[0][0]
+
     end
 
 
-    @recent_entries = Entry.find(:all,:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
+
+    @recent_entries = Entry.all(:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
   end
 
   
@@ -192,7 +178,7 @@ class EntriesController < ApplicationController
     earliest_factor_time    = add_hours(Time.now, -24 * @search_time)
     db_factors = Factor.find_all_by_symbol(@symbol,:conditions=>["created_at > ? ",time_to_sql_timestamp(earliest_factor_time)])
     db_factors.each do |_factor|
-      factors << [(add_hours(_factor.created_at,-4).to_f.to_i * 1000),_factor.factor]
+      factors << [(add_hours(_factor.created_at,-5).to_f.to_i * 1000),_factor.factor]
     end
 
     factors.sort! { |a,b| a[0]<=>b[0]}

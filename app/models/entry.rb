@@ -2,7 +2,8 @@ require 'util'
 
 class Entry < ActiveRecord::Base
   belongs_to :source
-  attr_accessible :symbol,:sent_at,:guid,:url,:message_type,:subject,:body,:action
+  has_one :email_content
+  attr_accessible :symbol,:sent_at,:guid,:url,:message_type,:action,:body,:content
 
 
   include Util
@@ -17,6 +18,16 @@ class Entry < ActiveRecord::Base
   def self.find_last_seven_days
     find(:all,:select=>"sent_at,id,symbol,source_id", :order=>"sent_at", :conditions=>
               ["sent_at > ?", DateTime.now - 7])
+  end
+
+  def self.find_last_30_days
+    find(:all,:select=>"sent_at,id,symbol,source_id", :order=>"sent_at", :conditions=>
+              ["sent_at > ?", DateTime.now - 30])
+  end
+
+  def self.find_distinct_in_last_30_days
+    all(:select=>"DISTINCT(symbol)",  :conditions=>
+              ["sent_at > ?", DateTime.now - 30])
   end
 
   def sent_at_on_graph
