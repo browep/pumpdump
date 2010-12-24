@@ -26,30 +26,30 @@ module Util
   end
 
   # DEPRECATED
-  def during_market_hours?(datetime,verbose=false)
-#    if verbose
-      puts "day: #{datetime.day()}, hour: #{datetime.hour()}, minute: #{datetime.min()}"
+#  def during_market_hours?(datetime,verbose=false)
+##    if verbose
+#      puts "day: #{datetime.day()}, hour: #{datetime.hour()}, minute: #{datetime.min()}"
+##    end
+#    # go through each market holiday, if it matches then not in market hours
+#    holiday_str = APP_CONFIG[:holidays]
+#    puts "holiday_str: #{holiday_str}"
+#    if !holiday_str.nil?
+#      holidays = holiday_str.split(",")
+#      current_day_str = "#{datetime.year}#{datetime.month}#{datetime.day}"
+#      puts "current day str: #{current_day_str}"
+#      holidays.each do |holiday|
+#        if holiday == current_day_str
+#          puts "current date matches holiday #{holiday}, ending"
+#          return false
+#        end
+#      end
 #    end
-    # go through each market holiday, if it matches then not in market hours
-    holiday_str = APP_CONFIG[:holidays]
-    puts "holiday_str: #{holiday_str}"
-    if !holiday_str.nil?
-      holidays = holiday_str.split(",")
-      current_day_str = "#{datetime.year}#{datetime.month}#{datetime.day}"
-      puts "current day str: #{current_day_str}"
-      holidays.each do |holiday|
-        if holiday == current_day_str
-          puts "current date matches holiday #{holiday}, ending"
-          return false
-        end
-      end
-    end
-    puts "not in one of the holidays"
-    if (datetime.day() <= 5 && (datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30) && datetime.hour() < 16) )
-      return true
-    end
-    false
-  end
+#    puts "not in one of the holidays"
+#    if (datetime.day() <= 5 && (datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30) && datetime.hour() < 16) )
+#      return true
+#    end
+#    false
+#  end
 
   def next_closest_market_open(datetime)
 
@@ -137,7 +137,7 @@ module Util
     end
     Rails.logger.info "not in one of the holidays"
 
-    datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 30 ))  && (datetime.hour() < 16  ))
+    datetime.cwday() <= 5 && ((datetime.hour() > 9 || (datetime.hour() == 9 && datetime.min() >= 45 ))  && (datetime.hour() < 16 || (datetime.hour() == 16 && datetime.min() <= 15)  ))
 
   end
 
@@ -177,6 +177,10 @@ module Util
       return datetime + hours/24.0
     end
     datetime + ( hours * 3600)
+  end
+
+  def add_minutes(datetime,minutes)
+    add_hours(datetime, minutes/60)
   end
 
   def tim_alert?(source)

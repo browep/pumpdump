@@ -94,7 +94,13 @@ class UtilTester < Test::Unit::TestCase
 
 
   def test_is_during_market_hours
-    assert !during_market_hours?(DateTime.now,true)
+#    assert !during_market_hours?(DateTime.now,true)
+    assert !during_trading_time?(DateTime.new(2010,12,22,4,16),true)
+    assert !during_trading_time?(DateTime.new(2010,12,22,16,16),true)
+    assert !during_trading_time?(DateTime.new(2010,12,22,9,44),true)
+    assert during_trading_time?(DateTime.new(2010,12,22,9,45),true)
+    assert during_trading_time?(DateTime.new(2010,12,22,16,15),true)
+    assert during_trading_time?(DateTime.new(2010,12,22,16,11),true)
   end
 
 end

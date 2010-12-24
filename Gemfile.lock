@@ -32,6 +32,7 @@ GEM
     arel (2.0.6)
     builder (2.1.2)
     daemons (1.0.10)
+    diff-lcs (1.1.2)
     dispatcher (0.0.1)
     em-http-request (0.2.15)
       addressable (>= 2.0.0)
@@ -74,8 +75,20 @@ GEM
       rake (>= 0.8.7)
       thor (~> 0.14.4)
     rake (0.8.7)
+    rspec (2.3.0)
+      rspec-core (~> 2.3.0)
+      rspec-expectations (~> 2.3.0)
+      rspec-mocks (~> 2.3.0)
+    rspec-core (2.3.1)
+    rspec-expectations (2.3.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.3.0)
     simple-rss (1.2.3)
     test-unit (2.1.2)
+    thin (1.2.7)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     thor (0.14.6)
     tmail (1.2.7.1)
     treetop (1.4.9)
@@ -93,6 +106,8 @@ DEPENDENCIES
   mongrel_cluster
   mysql2
   rails (= 3.0.3)
+  rspec
   simple-rss
   test-unit
+  thin
   tmail

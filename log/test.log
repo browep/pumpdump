@@ -9904,3 +9904,63 @@
   [1m[35mSQL (1.0ms)[0m  describe `quotes`
   [1m[36mAREL (0.6ms)[0m  [1mINSERT INTO `quotes` (`symbol`, `exchange`, `created_at`, `updated_at`, `market_time`, `last_price`) VALUES ('OPGXD', NULL, '2010-12-18 05:10:28', '2010-12-18 05:10:28', '2010-12-18 04:10:28', 0.005)[0m
   [1m[35mSQL (0.2ms)[0m  COMMIT
+[DEBUG: 1223 20:23:56 #17955] day: 3
+[DEBUG: 1223 20:23:56 #17955] hour: 4
+[DEBUG: 1223 20:23:56 #17955] minute: 16
+[DEBUG: 1223 20:23:56 #17955] zone: +00:00
+[DEBUG: 1223 20:23:56 #17955] holiday_str: 
+[INFO: 1223 20:23:56 #17955] not in one of the holidays
+[DEBUG: 1223 20:23:56 #17955] day: 3
+[DEBUG: 1223 20:23:56 #17955] hour: 16
+[DEBUG: 1223 20:23:56 #17955] minute: 16
+[DEBUG: 1223 20:23:56 #17955] zone: +00:00
+[DEBUG: 1223 20:23:56 #17955] holiday_str: 
+[INFO: 1223 20:23:56 #17955] not in one of the holidays
+[DEBUG: 1223 20:23:56 #17955] day: 3
+[DEBUG: 1223 20:23:56 #17955] hour: 9
+[DEBUG: 1223 20:23:56 #17955] minute: 44
+[DEBUG: 1223 20:23:56 #17955] zone: +00:00
+[DEBUG: 1223 20:23:56 #17955] holiday_str: 
+[INFO: 1223 20:23:56 #17955] not in one of the holidays
+[DEBUG: 1223 20:23:56 #17955] day: 3
+[DEBUG: 1223 20:23:56 #17955] hour: 9
+[DEBUG: 1223 20:23:56 #17955] minute: 45
+[DEBUG: 1223 20:23:56 #17955] zone: +00:00
+[DEBUG: 1223 20:23:56 #17955] holiday_str: 
+[INFO: 1223 20:23:56 #17955] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 4
+[DEBUG: 1223 20:25:11 #18090] minute: 16
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 16
+[DEBUG: 1223 20:25:11 #18090] minute: 16
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 9
+[DEBUG: 1223 20:25:11 #18090] minute: 44
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 9
+[DEBUG: 1223 20:25:11 #18090] minute: 45
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 16
+[DEBUG: 1223 20:25:11 #18090] minute: 15
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
+[DEBUG: 1223 20:25:11 #18090] day: 3
+[DEBUG: 1223 20:25:11 #18090] hour: 16
+[DEBUG: 1223 20:25:11 #18090] minute: 11
+[DEBUG: 1223 20:25:11 #18090] zone: +00:00
+[DEBUG: 1223 20:25:11 #18090] holiday_str: 
+[INFO: 1223 20:25:11 #18090] not in one of the holidays
