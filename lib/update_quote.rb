@@ -56,15 +56,21 @@ class QuoteUpdater
 
       while !@queue.empty?
         do_some_quotes(200)
+        print_status
         Rails.logger.debug "sleeping after doing another queue"
         sleep @sleep_time
       end
   end
 
+  def print_status
+      Rails.logger.info "orig size = #{@orig_total} , left = #{@not_done.size}: #{@not_done.to_a.join(",")}"
+
+  end
+
   def finish(symbol)
     @not_done.delete(symbol)
     if @not_done.size < 50 || true
-      Rails.logger.info "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
+#      Rails.logger.info "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
     end
     if @not_done.empty?
       puts "Done."
@@ -112,6 +118,7 @@ class QuoteUpdater
         begin
           result = JSON.parse(body)
         rescue => e
+          Rails.logger.error e.backtrace.join("\n")
         end
 #        Rails.logger.debug result.to_yaml
         result['query']['results']['quote'].each do |symbol_result|
@@ -148,7 +155,7 @@ class QuoteUpdater
         end
 #      }
     rescue => e
-      Rails.logger.debug e.backtrace
+      Rails.logger.error e.backtrace.join("\n")
       symbols.each { |symbol| finish(clean_symbol(symbol)) }
     end
   end

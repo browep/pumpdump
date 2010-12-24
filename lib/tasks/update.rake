@@ -9,8 +9,17 @@ require 'update_quote'
 require 'core'
 
 namespace :update do
-  task :quote => :environment do
 
+
+  def divert_to_stdout
+    if defined?(Rails) && (Rails.env == 'production')
+      Rails.logger = Logger.new(STDOUT)
+    end
+  end
+  
+
+  task :quote => :environment do
+#    divert_to_stdout
     # create new updater
     puts "START updating quotes"
     start_time  = Time.now
