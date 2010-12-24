@@ -16,6 +16,7 @@ class QuoteUpdater
     @observe_market_time = APP_CONFIG[:observe_market_time]
     @queue= Queue.new
     @not_done   = Set.new
+    @sleep_time = 7
 
 # get symbols in play
 
@@ -29,7 +30,7 @@ class QuoteUpdater
       @not_done << entry.symbol
     }
 #    puts "getting quotes for #{@queue.to_yaml}"
-    puts "queue size: #{@queue.size}"
+    Rails.logger.info "queue size: #{@queue.size}"
     @orig_total = @queue.size
   end
 
@@ -52,26 +53,21 @@ class QuoteUpdater
       return
     end
 
-    EM.run {
-      require 'em-http'
 
       while !@queue.empty?
         do_some_quotes(200)
         Rails.logger.debug "sleeping after doing another queue"
-        sleep 10
+        sleep @sleep_time
       end
-    }
-    Rails.logger.info "EM has stopped running"
   end
 
   def finish(symbol)
     @not_done.delete(symbol)
     if @not_done.size < 50 || true
-      puts "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
+      Rails.logger.info "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
     end
     if @not_done.empty?
-      puts "stopping EM"
-      EventMachine::stop_event_loop
+      puts "Done."
     end
   end
 
@@ -138,7 +134,7 @@ class QuoteUpdater
         # whatever hasnt been removed, try with .PK extension
         if !symbols.empty?
           Rails.logger.debug "sleeping before making another call"
-          sleep 10
+          sleep @sleep_time
           if extension == ""
             call_and_parse(symbols, ".PK")
           elsif extension == ".PK"
