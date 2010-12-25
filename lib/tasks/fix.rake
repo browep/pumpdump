@@ -82,5 +82,12 @@ namespace :fix do
     do_migrations
   end
 
+  task :misc_1 => :environment do
+    include Util
+    entries = Entry.select("DISTINCT(symbol)").where("created_at > ?", add_days(DateTime.now, -7)).order("rand()").limit(50)
+    symbols = []
+    entries.each {|entry|symbols << entry.symbol}
+    puts "\"#{symbols.join("\",\"")}"
+  end
 
 end

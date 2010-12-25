@@ -16,6 +16,7 @@ gem 'eventmachine'
 gem 'em-http-request'
 gem 'thin'
 gem 'rspec'
+gem 'oauth'
 #gem 'parsedate'
 
 # Use unicorn as the web server

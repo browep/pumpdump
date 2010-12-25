@@ -1,8 +1,9 @@
 require "update"
 require "util"
 require 'eventmachine'
+require 'oauth'
 
-class QuoteUpdater 
+class QuoteUpdater
 
   include Update
 
@@ -16,7 +17,9 @@ class QuoteUpdater
     @observe_market_time = APP_CONFIG[:observe_market_time]
     @queue= Queue.new
     @not_done   = Set.new
-    @sleep_time = 7
+    @sleep_time = 0
+    @symbols_success = Queue.new
+    @symbols_failure = Queue.new
 
 # get symbols in play
 
@@ -55,11 +58,12 @@ class QuoteUpdater
 
 
       while !@queue.empty?
-        do_some_quotes(200)
+        do_some_quotes(50)
         print_status
         Rails.logger.debug "sleeping after doing another queue"
         sleep @sleep_time
       end
+    Rails.logger.info "Done."
   end
 
   def print_status
@@ -67,12 +71,19 @@ class QuoteUpdater
 
   end
 
-  def finish(symbol)
+  def finish(symbol,success=true)
+
+    if success
+      @symbols_success << symbol
+    else
+      @symbols_failure << symbol
+    end
     @not_done.delete(symbol)
     if @not_done.size < 50 || true
 #      Rails.logger.info "orig size = #{@orig_total} , left = #{@not_done.to_a.join(",")}"
     end
     if @not_done.empty?
+      Rails.logger.info "Original Size: #{@orig_total}. Failed: #{@symbols_failure.size}"
       puts "Done."
     end
   end
@@ -107,14 +118,11 @@ class QuoteUpdater
       (0..symbols.size-1).each do |i|
         symbols[i] = symbols[i] + extension
       end
-      url = "http://query.yahooapis.com/v1/public/yql?q=select%20Symbol,LastTradePriceOnly,LastTradeTime%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22#{symbols.join(",")}%22)&env=store://datatables.org/alltableswithkeys&format=json"
-#      url = "http://download.finance.yahoo.com/d/quotes.csv?s=#{symbols.join("+")}&f=l1"
-      Rails.logger.debug url
 
 #      EM::HttpRequest.new(url).get.callback { |http|
 #        body = http.response
-      body = fetch(url).body
-#        Rails.logger.debug "response: #{body}"
+      body = yahoo_oauth_query(symbols).body
+        Rails.logger.debug "response: #{body}"
         begin
           result = JSON.parse(body)
         rescue => e
@@ -150,13 +158,13 @@ class QuoteUpdater
           else
             # these are all the extension, we can't do anything about all this, finish these symbols
             Rails.logger.error "Couldnt find prices for #{symbols.join(",")}"
-            symbols.each { |symbol| finish(clean_symbol(symbol)) }
+            symbols.each { |symbol| finish(clean_symbol(symbol),false) }
           end
         end
 #      }
     rescue => e
       Rails.logger.error e.backtrace.join("\n")
-      symbols.each { |symbol| finish(clean_symbol(symbol)) }
+      symbols.each { |symbol| finish(clean_symbol(symbol),false) }
     end
   end
 
@@ -209,7 +217,22 @@ class QuoteUpdater
     end
   end
 
+  def yahoo_oauth_query(symbols)
+    url          = "http://query.yahooapis.com/v1/public/yql?q=select%20Symbol,LastTradePriceOnly,LastTradeTime%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22#{symbols.join(",")}%22)&env=store://datatables.org/alltableswithkeys&format=json"
 
+    Rails.logger.debug url
+
+    consumer     = OAuth::Consumer.new(APP_CONFIG[:yahoo_consumer_key], APP_CONFIG[:yahoo_consumer_secret],
+                                       :site               => "https://api.login.yahoo.com/oauth/v2/",
+                                       :request_token_path => "get_request_token",
+                                       :authorize_path     => "request_auth",
+                                       :access_token_path  => "get_token",
+                                       :http_method        => :get)
+
+    # make the access token from your consumer
+    access_token = OAuth::AccessToken.new consumer
+    access_token.get(url)
+  end
 
 
 end

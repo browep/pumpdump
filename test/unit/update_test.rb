@@ -47,4 +47,10 @@ class UpdateTester < Test::Unit::TestCase
   def test_all_factor
     update_all_factors
   end
+
+  def test_yahoo_oauth
+    updater = QuoteUpdater.new({})
+    results = updater.yahoo_oauth_query(["AAPL","MSFT","CPI","LUKE","CASEY","NOC","TKMR","KHZM","BSX","YEAR","AGDI","GSC","LNET","KMX","NXG","ORFG","LOI","ASA","CABG","CNGI","PKF","CNAM","HCV","SCE","UEC","MCVE","PMXO","DOD","STO","SPPI","DEA","CIBC","ANOC","INUV","ICAD","ARG","XING","PFE","EGI","CNOZ","LXX","ICGN","ARPU","SRGE","IVAN","VCTY","HLNT","AVNA","LPI","GGI","LBSR","RSNA"])
+    results
+  end
 end
