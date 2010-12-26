@@ -1,5 +1,6 @@
 <table><% for symbol in @symbols %>
-    <tr><td><%= link_to symbol.symbol,:action => "verify",:id=>symbol %></td></tr>
+    <tr><td><%= link_to symbol.symbol,:action => "verify",:id=>symbol %></td>
+      <td><%= link_to "on google","http://www.google.com/finance?q=#{symbol.symbol}",:target=>"_new" %></td></tr>
 
 
 <% end %></table>

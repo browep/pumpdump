@@ -33,6 +33,8 @@ Pumpdump::Application.routes.draw do
   end
   resources :admin
 
+  resources :bad_symbols
+
   # Sample resource route with options:
   #   resources :products do
   #     member do
