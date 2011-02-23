@@ -90,4 +90,13 @@ namespace :fix do
     puts "\"#{symbols.join("\",\"")}"
   end
 
+  task :misc_2 => :environment do
+    include Util
+    do_with_pagination(Entry,{:conditions=>["message_type = ?",1]},10) do |results|
+      results.each do |result|
+        Rails.logger.info(result.guid)
+      end
+    end
+  end
+
 end

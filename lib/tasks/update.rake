@@ -67,7 +67,36 @@ namespace :update do
   end
 
 
+  task :top_changed => :environment do
+    include  Core
 
+    top_symbol_from_cache = Rails.cache.read("top_symbol")
+    Rails.logger.info "Top Symbol from cache: #{top_symbol_from_cache}"
+    top_symbol_from_db = Factor.top[0][:symbol]
+    Rails.logger.info "Top Symbol from search: #{top_symbol_from_db}"
+
+    #if the cached one was nothing, set it to the top from db
+    if top_symbol_from_cache.nil?
+      Rails.logger.info("cached top symbol was nil, setting it to the db one : #{top_symbol_from_db}")
+      Rails.cache.write("top_symbol",top_symbol_from_db)
+
+    # we have one from the db and it doesnt equal the cached one
+    elsif !top_symbol_from_db.nil? && top_symbol_from_db != top_symbol_from_cache
+      Rails.logger.info("cached top symbol does not equal top from db, from cache:#{top_symbol_from_cache},  db:#{top_symbol_from_db}")
+      Rails.cache.write("top_symbol",top_symbol_from_db)
+      top_changed(top_symbol_from_db)
+    elsif top_symbol_from_cache == top_symbol_from_db
+      Rails.logger.info("from cache and db both equal #{top_symbol_from_cache} , do nothing")
+    end
+
+
+
+
+  end
+
+  task :clear_top_changed => :environment do
+    Rails.cache.write("top_symbol",nil)
+  end
 
 
 

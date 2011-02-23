@@ -278,4 +278,16 @@ module Util
     time.strftime("%Y-%m-%d %H:%M:%S")
   end
 
+  def do_with_pagination(model,query_args,page_size)
+    offset = 0
+
+    begin
+      query_args.update({:offset=>offset,:limit=>page_size})
+      results = model.all(query_args)
+      yield(results)
+      offset += page_size
+    end while results.size == page_size
+
+  end
+
 end

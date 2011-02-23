@@ -41,6 +41,9 @@ module ActiveSupport
     end
   end
 end
+
+ActionController::Base.cache_store = :file_store, "/var/lib/pumpdump/cache"
+
 # Initialize the rails application
 Pumpdump::Application.initialize!
 

@@ -17,6 +17,9 @@ gem 'em-http-request'
 gem 'thin'
 gem 'rspec'
 gem 'oauth'
+gem 'rspec'
+gem 'rspec-rails'
+gem 'httparty'
 #gem 'parsedate'
 
 # Use unicorn as the web server

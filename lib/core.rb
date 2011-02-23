@@ -1,6 +1,8 @@
 require "rubygems"
 require "thread"
 require "util"
+require "httparty"
+
 module Core
 
   include Util
@@ -98,18 +100,29 @@ module Core
   end
 
   def do_migrations
-    entries = Entry.all(:conditions=>["message_type =? ",1],:order=>"id")
-    Rails.logger.info "num entries"
-    entries.each do |entry|
-      if  entry.email_content.nil? && !entry.body.nil? && !entry.subject.nil?
-        Rails.logger.info "Migrating entry:#{entry.id}"
-        email_content       = EmailContent.new(:body=>entry.body, :subject=>entry.subject)
-        email_content.entry = entry
-        email_content.save
-      else
-        Rails.logger.info "NOT Migrating entry:#{entry.id}"
+    do_with_pagination(Entry, {:conditions=>["message_type = ?", 1]}, 10) do |entries|
+      entries.each do |entry|
+        if  entry.email_content.nil? && !entry.body.nil? && !entry.subject.nil?
+          Rails.logger.info "Migrating entry:#{entry.id}"
+          email_content = EmailContent.new(:body=>entry.body, :subject=>entry.subject)
+          email_content.entry = entry
+          email_content.save
+          entry.update_attributes({:body=>nil,:subject=>nil}) 
+
+        else
+          Rails.logger.info "NOT Migrating entry:#{entry.id}"
+        end
       end
     end
+  end
+
+  def top_changed(symbol)
+    # tweet it out
+    response = HTTParty.post("http://easytweet.heroku.com/api/status",{:headers=>{"X-TWITTER-ID"=>APP_CONFIG[:easy_tweet_id].to_s,"X-TWITTER-TOKEN"=>APP_CONFIG[:easy_tweet_token].to_s},
+        :body=>"The stock with the highest factor has changed to $#{symbol}.  See it here http://thestockfactor.com"
+    })
+    Rails.logger.info("response from easy_tweet #{response.to_yaml}")
+    
   end
 
 end
