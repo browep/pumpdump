@@ -153,6 +153,7 @@ class EntriesController < ApplicationController
   end
 
   def email
+    @title = Email
     @entry = Entry.find(params[:id])
   end
 

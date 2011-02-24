@@ -134,8 +134,6 @@ module Update
             entry = Entry.new(:message_type=>type_email(),
                               :symbol=>symbol,
                               :sent_at=>email[:sent_at],
-                              :subject=>email[:subject],
-                              :body=>html2text(email[:body]),
                               :guid=>"#{email[:from_address]}:#{email[:sent_at].to_f.to_s}",
                               :action=>action
             )
@@ -145,6 +143,12 @@ module Update
             if entry.save
               @entry_count += 1
             end
+
+            email_content = EmailContent.new(:subject=>email[:subject],
+                                             :body=>html2text(email[:body])
+            )
+            email_content.entry = entry
+            email_content.save
 
           rescue => e
             put_error e
