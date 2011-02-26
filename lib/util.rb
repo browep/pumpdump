@@ -1,3 +1,4 @@
+require 'digest/md5'
 
 module Util
   # gets how many days ago it was, returns 0 if it was since the last market close
@@ -288,6 +289,10 @@ module Util
       offset += page_size
     end while results.size == page_size
 
+  end
+
+  def sign_text(text)
+    Digest::MD5.hexdigest("#{text}#{APP_CONFIG[:provider_secret_key]}")
   end
 
 end

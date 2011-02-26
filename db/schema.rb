@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101218192643) do
+ActiveRecord::Schema.define(:version => 20110226013757) do
 
   create_table "bad_symbols", :force => true do |t|
     t.string   "symbol",                  :null => false
@@ -84,6 +84,14 @@ ActiveRecord::Schema.define(:version => 20101218192643) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "subscribers", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "address",    :null => false
+  end
+
+  add_index "subscribers", ["address"], :name => "index_subscribers_on_address"
 
   create_table "tweets", :force => true do |t|
     t.integer  "source_id",  :null => false

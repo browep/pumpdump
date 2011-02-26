@@ -30,6 +30,14 @@ GEM
     activesupport (3.0.3)
     addressable (2.2.2)
     arel (2.0.6)
+    aws-ses (0.4.1)
+      builder
+      builder
+      mail (~> 2.2.5)
+      mime-types
+      mime-types
+      xml-simple
+      xml-simple
     builder (2.1.2)
     crack (0.1.8)
     daemons (1.0.10)
@@ -103,11 +111,13 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    xml-simple (1.0.14)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-ses (~> 0.4.1)
   dispatcher
   em-http-request
   eventmachine

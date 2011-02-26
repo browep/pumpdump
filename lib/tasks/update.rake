@@ -98,6 +98,18 @@ namespace :update do
     Rails.cache.write("top_symbol",nil)
   end
 
+  task :set_top_changed => :environment do
+    Rails.cache.write("top_symbol","AAPL")
+  end
+
+  task :send_aws_email => :environment do
+    Subscriber.all.each do |subscriber|
+      Rails.logger.info("sending email to #{subscriber.to_yaml}")
+      AlertMailer.top_changed_email(subscriber, 'AAPL').deliver()
+    end
+
+  end
+
 
 
 end

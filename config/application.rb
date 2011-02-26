@@ -43,6 +43,9 @@ module Pumpdump
 #    config.database_configuration_file= "/usr/local/pumpdump/conf/database.yml"
     paths.config.database="/usr/local/pumpdump/conf/database.yml"
 
+    config.action_mailer.delivery_method = :ses
+
+
 
 
 

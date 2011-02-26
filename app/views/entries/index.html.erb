@@ -9,6 +9,23 @@
     <br/>
     <hr>
     <br/>
+    Want to be alerted when the stock with the highest factor changes?  Enter your email below and we will send you
+    an email each time the top ones change. (Oh yeah, and we promise not to spam you or sell your email address.)
+    <div style="text-align:center"><% form_for @subscriber do |f| %>
+          <%= render :partial => "base/flash",:object => flash %>
+
+      <p>
+        <label>Email Address: </label>
+        <%= f.text_field :address,:id=>"tb" %>
+    <script>
+    var txtBox=document.getElementById("tb" );
+    if (txtBox!=null ) txtBox.focus();
+    </script>
+
+      <%= f.submit "Subscribe" %></p>
+    <% end %></div>
+
+    <hr>
 
 
   </div>

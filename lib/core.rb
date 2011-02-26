@@ -118,10 +118,24 @@ module Core
 
   def top_changed(symbol)
     # tweet it out
-    response = HTTParty.post("http://easytweet.heroku.com/api/status",{:headers=>{"X-TWITTER-ID"=>APP_CONFIG[:easy_tweet_id].to_s,"X-TWITTER-TOKEN"=>APP_CONFIG[:easy_tweet_token].to_s},
-        :body=>"The stock with the highest factor has changed to $#{symbol}.  See it here http://thestockfactor.com"
-    })
-    Rails.logger.info("response from easy_tweet #{response.to_yaml}")
+    begin
+      response = HTTParty.post("http://easytweet.heroku.com/api/status", {:headers=>{"X-TWITTER-ID"=>APP_CONFIG[:easy_tweet_id].to_s, "X-TWITTER-TOKEN"=>APP_CONFIG[:easy_tweet_token].to_s},
+                                                                          :body=>"The stock with the highest factor has changed to $#{symbol}.  See it here http://thestockfactor.com"
+      })
+      Rails.logger.info("response from easy_tweet #{response.to_yaml}")
+    rescue => e
+      Rails.logger.error(e)
+    end
+
+    Subscriber.all.each do |subscriber|
+      begin
+        Rails.logger.info("sending email to #{subscriber.to_yaml}")
+        AlertMailer.top_changed_email(subscriber, symbol).deliver()
+      rescue => e
+        Rails.logger.error(e)
+      end
+    end
+
     
   end
 

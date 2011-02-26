@@ -10,8 +10,12 @@ class EntriesController < ApplicationController
 
     @symbols = Factor.top
 
-
     @recent_entries = Entry.all(:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
+
+    @subscriber = Subscriber.new
+
+    @flash_inner = true
+
   end
 
   

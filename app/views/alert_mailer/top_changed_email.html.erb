@@ -1,0 +1,6 @@
+<%= @symbol %> is not the symbol with the highest stock factor.
+<br />
+<ul>
+  <li><%= link_to "See it on the graph",:only_path=>false,:host=>APP_CONFIG[:domain],:controller=>:entries,:action=>:symbol,:id=>@symbol %></li>
+  <li><a href="http://<%= APP_CONFIG[:domain] %>">See the list of the stocks with the highest factor</a> </li>
+</ul>

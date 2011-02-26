@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+  <table>
+    <tr>
+      <td>
+        <h3>The Stock Factor</h3>
+      </td>
+    </tr>
+    <tr>
+      <td><%= yield %></td>
+    </tr>
+    <tr>
+      <td>
+        <a href="<%= "http://#{APP_CONFIG[:domain]}/subscribers/destroy/#{@subscriber.id}?signature=#{@signature}"%>">Unsubscribe from all emails</a> (One click and you are unsubscribed, no confirm step.)
+      </td>
+    </tr>
+  </table>
+  </body>
+</html>

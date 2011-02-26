@@ -1,4 +1,6 @@
 Pumpdump::Application.routes.draw do
+  resources :subscribers
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

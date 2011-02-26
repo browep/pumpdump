@@ -20,7 +20,7 @@ gem 'oauth'
 gem 'rspec'
 gem 'rspec-rails'
 gem 'httparty'
-#gem 'parsedate'
+gem "aws-ses", "~> 0.4.1", :require => 'aws/ses'
 
 # Use unicorn as the web server
 # gem 'unicorn'
