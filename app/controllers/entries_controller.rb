@@ -3,6 +3,7 @@ require 'core'
 class EntriesController < ApplicationController
   before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
   include Core
+  layout false
 
   def index
 

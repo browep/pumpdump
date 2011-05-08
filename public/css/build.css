@@ -101,8 +101,8 @@
 	/* ------ 2. Header ------ */
 
 	#logo{margin:40px 0 0 0;float:left;}
-	.default-logo a{background:transparent url(../images/logo.png) no-repeat;width:93px;height:30px;float:left;}
-	.default-logo a:hover{background:url(../images/logo-hover.png) no-repeat;float:left;}
+	.default-logo a{height:30px;float:left;font-size:3.5em;}
+	/*.default-logo a:hover{float:left;}*/
 	
 	/* ------ 3. Footer ------ */
 	
@@ -195,7 +195,7 @@
 	
 	/* ------ 1. Top Navigation ------ */
 	
-	#nav-wrapper{width:700px;height:14px;font-size:14px;margin-top:48px;float:right;}	
+	#nav-wrapper{width:540px;height:14px;font-size:14px;margin-top:48px;float:right;}
 	#nav{height:14px;display:block;margin:0;padding:0;position:relative;float:right;}
 		#nav a{display:block;color:#777;margin-left:50px;line-height:1;}
 			#nav *:hover{color:#000}
