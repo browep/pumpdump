@@ -47,6 +47,8 @@ Pumpdump::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  config.logger.auto_flushing = true
+
   puts "environment=production"
 
 end
