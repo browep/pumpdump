@@ -2,6 +2,7 @@ require 'net/http'
 require 'json'
 require 'simple-rss'
 require 'open-uri'
+require 'httparty'
 
 require 'net/imap'
 require 'update'
@@ -107,6 +108,24 @@ namespace :update do
       Rails.logger.info("sending email to #{subscriber.to_yaml}")
       AlertMailer.top_changed_email(subscriber, 'AAPL').deliver()
     end
+
+  end
+
+  task :update_top_charts => :environment do
+    include Util
+    include Core
+    i = 0
+    top_symbols = Factor.top[0..2]
+    top_symbols.to_a.each do |top_symbol|
+      Rails.cache.write("symbol_#{i}",top_symbol[:symbol])
+      factors,min_price,prices = Entry.get_quotes(top_symbol[:symbol],7)
+      Rails.cache.write("factors_#{i}",factors)
+      Rails.cache.write("prices_#{i}",prices)
+      Rails.cache.write("min_price_#{i}",min_price)
+      i+=1
+    end
+
+
 
   end
 

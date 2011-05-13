@@ -27,13 +27,17 @@ Pumpdump::Application.routes.draw do
   match '/:controller(/:action(/:id))'
 
 
+
   resources :entries do
 
     collection do
-      get :symbol, :email
+      get :symbol, :email, :chart
     end
   end
   resources :admin
+
+  match 'contact' => 'admin#contact', :as=>'contact'
+
 
   resources :bad_symbols
 

@@ -2117,3 +2117,51 @@
     }
     
 })(jQuery);
+
+
+var plotWithOptions = function(prices_json, factors_json, min_price, buys_json, sells_json, title) {
+    var barWidth = 0.1;
+    var priceBarWidth = 4;
+    var placeHolder = $("#placeholder");
+    var plot = $.plot(placeHolder, [
+
+        {
+
+            data: prices_json,
+            bars: { show: true, barWidth:priceBarWidth }  ,
+            yaxis: 2
+        },
+        {
+            data: factors_json,
+            lines: { show: true,fill: true }
+        },
+        {
+            data: buys_json,
+            bars: { show: true }
+        },
+        {
+            data: sells_json,
+            bars: { show: true }
+        }
+    ], {
+        y2axis: {
+            tickFormatter: function (v, axis) {
+                return "$" + v.toFixed(axis.tickDecimals)
+            },
+            min: min_price
+        },
+        xaxis: { mode: 'time' },
+        colors: ["#3366FF","#FF6633","#90ee90","#ff0000"]
+    }
+            );
+
+    if (title) {
+        var o;
+
+        o = plot.pointOffset({ x: 2, y: -1.2});
+        // we just append it to the placeholder which Flot already uses
+        // for positioning
+        placeHolder.append('<div style="position:absolute;left:418px;top:20px;font-size:larger">'+title+'</div>');
+    }
+
+};

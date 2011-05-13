@@ -1,0 +1,11 @@
+<div class="<%= class_name %>" style="margin-top:15px;">
+  <h2><%= "##{index}: #{featured_symbol[:symbol]}" %> -><span class="green strong"><%= featured_symbol[:factor] %></span></h2>
+  <div class="horizontal-rule"></div>
+  <p>
+    <span class="medium-text"><span class="green">Mentions</span>: <%= featured_symbol[:count] %> <br/></span>
+    <span class="medium-text"><span class="green">Sources</span>: <%= featured_symbol[:source_count] %> <br/></span>
+
+  </p>
+
+  <div class="more-float"><%= link_to 'View Chart',{:action=>:symbol,:id=>featured_symbol[:symbol]},{:class=>'medium button'} %></div>
+</div>

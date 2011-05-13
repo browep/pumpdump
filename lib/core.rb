@@ -7,7 +7,7 @@ module Core
 
   include Util
 
-  def factor(symbol,curr_time=Time.now)
+  def do_factor(symbol,curr_time=Time.now)
     sql = "SELECT entries.created_at,sources.weight,sources.id FROM `entries`,`sources` WHERE (entries.created_at < '#{time_to_sql_timestamp(add_hours(curr_time,5))}' ) AND (`entries`.`symbol` = '#{symbol}') AND entries.source_id = sources.id"
 #    puts sql
     res = Entry.connection.execute(sql)
@@ -39,7 +39,7 @@ module Core
 
   def update_factor(symbol,curr_time=Time.now)
     # get the factor
-    _factor = factor(symbol,curr_time)
+    _factor = do_factor(symbol,curr_time)
     # save that factor
     _factor = Factor.new({:symbol=>symbol,:factor=>_factor})
     _factor.created_at = curr_time

@@ -66,12 +66,23 @@
 
         <div class="horizontal-rule"></div>
 
-        <!-- Slogan Start -->
-        <div id="slogan">
-            <span class="slogan-large">W</span>elcome to <span class="green">Reducto</span> by <span class="green">Evaske</span>. Use these lines of text to describe what it is you do and how you do it.<span class="green">Use it to sell yourself</span>.
-        </div>
 
       <%= yield %>
+
+
+        <div class="horizontal-rule"></div>
+
+        <!-- Footer Start -->
+        <div id="footer-wrapper">
+            <ul>
+            	<%= render :partial => 'option_bar' %>
+            </ul>
+            <div id="footer-logo"></div>
+            <div id="footer-copyright">Copyright 2011. All Rights Reserved</div>
+        </div>
+        <!-- Footer End -->
     </div>
+    <script type="text/javascript"> Cufon.now(); </script>
+<script type="text/javascript">jQuery(document).ready(function($) { $("#twitter").tweet({username: "thestockfactor",}); });</script>
 </body>
 </html>

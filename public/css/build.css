@@ -177,6 +177,7 @@
 	.yellow{color:#CABF42;}
 	.magenta{color:#A9014B;}
 	.orange{color:#FF5C00;}
+    .grey{color:#AAA;}
 	.greenitalic{color:#A7CE44;font-style:italic;}
 	.portfolio-date{color:#AAA;font-size:10px;text-transform:uppercase;margin-top:5px;float:left;}
 	.font-styles{font-size:14px;float:left;display:inline;list-style:none;}
@@ -219,7 +220,11 @@
 	/* Slogan */
 	#slogan{width:100%;text-align:center;font-size:24px;margin-top:30px;color:#777;float:left;}	
 	.slogan-large{font-size:36px;}
-		
+	.medium-text{font-size:18px;}
+	.larger-text{font-size:22px;}
+	.large-text{font-size:24px;}
+	.small-text{font-size:10px;}
+
 	/* Slider */
 	#slides{
 		position:relative;
@@ -253,7 +258,7 @@
 	#slider-shadow{background:url(../images/slider-shadow.png) no-repeat;width:940px;height:3px;margin-bottom:30px;font-size:0;float:left;}
 	
 	/* Feautured Work */
-	#featured-wrapper{width:700px;height:auto;height:100%;margin:30px 20px 0px 0;float:left;}
+	#featured-wrapper{width:940px;height:auto;height:100%;margin:30px 20px 0px 0;float:left;}
 	.featured-image{background-color:#FFF;width:208px;height:130px;border:1px solid #DDD;padding:5px;float:left;}
 	a.featured-link{text-decoration:underline;color:#A7CE44;float:right;}
 		a.featured-link:hover{color:#444;}
@@ -462,7 +467,7 @@
 		line-height:1;
 		text-shadow:0 -1px 1px rgba(0,0,0,0.25);}
 	.large.button,.large.button:visited{font-size:14px;padding:8px 14px 9px;}
-	
+	.xlarge.button,xlarge.button:visited{font-size:24px;padding:8px 14px 9px;}
 	/* Colours */
 	.button:hover{background-color:#111;color:#fff;}
 	.button:active{top:1px;}

@@ -3,7 +3,6 @@ require 'core'
 class EntriesController < ApplicationController
   before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
   include Core
-  layout false
 
   def index
 
@@ -62,6 +61,8 @@ class EntriesController < ApplicationController
     redirect_to entries_url
   end
 
+
+
   def symbol
     @javascript_includes = ["jquery","jquery.flot","jquery.flot.stack"]
     @symbol = params[:id]
@@ -75,33 +76,9 @@ class EntriesController < ApplicationController
     # get all the entries for this
 
 
-    prices = Quote.find_all_by_symbol(@symbol,:select=>"market_time,last_price",:order=>"market_time",:conditions=>
-      ["market_time > ?",DateTime.now - @search_time])
-
-
-    # get the earliest price, we need to make sure we get a factor at that time to fill out the graph
-    earliest_graph_item = nil
-    if !prices.nil? && prices.size > 0
-      earliest_graph_item = prices[0].market_time_with_zone
-    end
-
-    prices_arr = Array.new
-    @min_price = nil
-    for price in prices
-      prices_arr.push([price.market_time_with_zone.to_f.to_i * 1000, price.last_price.to_f])
-      if @min_price.nil? || @min_price > price.last_price
-        @min_price = price.last_price
-      end
-    end
-
-    if @min_price.nil?
-      @min_price = 0
-    else
-      @min_price = @min_price * 0.98
-    end
-
-    @prices_json = prices_arr.to_json
-    logger.debug "prices_json:#{@prices_json.to_s}"
+    factors,@min_price,prices = Entry.get_quotes(@symbol, @search_time)
+    @factors_json = factors.to_json
+    @prices_json = prices.to_json
 
     # get all the entries
     @entries = Entry.find_all_by_symbol(@symbol,:order=>"sent_at",:conditions=>
@@ -123,38 +100,11 @@ class EntriesController < ApplicationController
       end
     end
 
-
-
-    factors = []
-    # new stock factor line
-    # do one for every day, plus the earliest entry or quote
-    factor_times = []
-    times_for_factors = (0..@search_time).to_a
-#    factor_times << earliest_graph_item
-    times_for_factors.reverse_each {|days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
-
-    # do a factor for each
-    factor_times.each do |time|
-      _factor = factor(@symbol, add_hours(time,-4))
-      factors << [add_hours(time,-8).to_f.to_i*1000,_factor]
-    end
-
-    # mixin all factors found in the db
-    # only get ones that are at least newer than the oldest factor we just computed
-    earliest_factor_time    = add_hours(Time.now, -24 * @search_time)
-    db_factors = Factor.find_all_by_symbol(@symbol,:conditions=>["created_at > ? ",time_to_sql_timestamp(earliest_factor_time)])
-    db_factors.each do |_factor|
-      factors << [(add_hours(_factor.created_at,-5).to_f.to_i * 1000),_factor[:factor]]
-    end
-
-    factors.sort! { |a,b| a[0]<=>b[0]}
-
-
-
-    @factors_json = factors.to_json
     @entries_json = entries_arr.to_json
     @buys_json = buy_arr.to_json
     @sells_json = sell_arr.to_json
+
+
   end
 
   def email
@@ -164,5 +114,15 @@ class EntriesController < ApplicationController
 
   def list
     @entries = Entry.all(:order=>"sent_at DESC")
+  end
+
+
+  def chart
+    num = params[:id]
+    @symbol = Rails.cache.read("symbol_#{num}")
+    @factors_json = Rails.cache.read("factors_#{num}").to_json
+    @prices_json =   Rails.cache.read("prices_#{num}").to_json
+    @min_price =  Rails.cache.read("min_price_#{num}")
+    render :layout => false
   end
 end

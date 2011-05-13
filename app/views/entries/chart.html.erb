@@ -1,0 +1,19 @@
+<html>
+<head>
+  <%= javascript_include_tag "jquery","jquery.flot","jquery.flot.stack" %>
+
+</head>
+<body>
+<% link_to :controller=>'entries',:action=>'symbol',:id=>@symbol do %>
+    <div id="placeholder" style="width:900px;height:290px;">
+<% end %>
+
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+    plotWithOptions(<%= @prices_json %>, <%= @factors_json %>, <%= @min_price %>, [], [],'<%= @symbol %>');
+</script>
+</body>
+</html>
