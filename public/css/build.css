@@ -110,7 +110,7 @@
 	#footer-wrapper ul{margin-top:40px;float:left;}	
 		#footer-wrapper ul li{margin-right:50px;float: left;}	
 	#footer-logo{background:url(../images/logo.png) no-repeat;width:93px;height:30px;margin-top:30px;float:right;}	
-	#footer-copyright{position:absolute;top:53px;right:0px;float:right;}	
+	#footer-copyright{position:absolute;top:40px;right:0px;float:right;}
 	a.footer-link{text-decoration:none;color:#777;}		
 		a.footer-link:hover{color:#444;}
 	
@@ -216,7 +216,11 @@
 	/* _____________________________________________________________________________________________________________________________________ */
 
 	/* ------ 1. Index Page ------ */
-	
+
+    .search-times {float: right;margin-right:75px;}
+    .time-link {font-size:18px;color:black;}
+    .selected-time {font-size:24px;color:#A7CE44;}
+
 	/* Slogan */
 	#slogan{width:100%;text-align:center;font-size:24px;margin-top:30px;color:#777;float:left;}	
 	.slogan-large{font-size:36px;}
@@ -615,3 +619,7 @@
 	/* 4. Navigation Widget */
 	ul.widget-list.navigation .selected a{padding-left:10px;color:#A7CE44;}
 	ul.widget-list.navigation .selected a:hover{color:#777;}
+
+
+    .subscriber-input > * { display:inline; float:none;}
+    .emphed { font-weight:bold;}

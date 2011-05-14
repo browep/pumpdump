@@ -6,12 +6,22 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=8" />
     <title>The Stock Factor</title>
-    <link rel="stylesheet" href="css/build.css" media="screen" id="stylesheet" />
+    <link rel="stylesheet" href="/css/build.css" media="screen" id="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
-    <script type="text/javascript" src="js/jquery.js"></script> <!-- JQuery -->
-    <script type="text/javascript" src="js/scripts.js"></script> <!-- JQuery Script File -->
-    <script type="text/javascript" src="js/cufon-yui.js"></script> <!-- Cufon Font Data -->
-    <script type="text/javascript" src="js/cufon.fonts.js"></script> <!-- Cufon Font Identifiers -->
+    <script type="text/javascript" src="/js/jquery.js"></script> <!-- JQuery -->
+    <script type="text/javascript" src="/js/scripts.js"></script> <!-- JQuery Script File -->
+    <script type="text/javascript" src="/js/cufon-yui.js"></script> <!-- Cufon Font Data -->
+    <script type="text/javascript" src="/js/cufon.fonts.js"></script> <!-- Cufon Font Identifiers -->
+  <%= stylesheet_link_tag 'application' %>
+  <%= javascript_include_tag  %>
+  <% if @javascript_includes
+         @javascript_includes.each do |javascript_include|
+  %>
+    <%= javascript_include_tag javascript_include %>
+      <% end
+         end
+      %>
+
 </head>
 <!-- Page Head End -->
 
@@ -30,43 +40,14 @@
     	<!-- Navigation Start -->
         <div id="nav-wrapper">
             <ul id="nav">
-            	<li><a href="index.htm">Home</a>
-                    <ul>
-                    	<li><a href="index-orbit.htm">Orbit Slider</a></li>
-                        <li><a href="index-3d.htm">3D Slider</a></li>
-                    </ul>
-                </li>
-
-                <li><a href="#">Features</a>
-                    <ul>
-                    	<li><a href="layouts.htm">Easy Column Layouts</a></li>
-                        <li><a href="widgets.htm">Widgets</a></li>
-                        <li><a href="typography.htm">Typography</a></li>
-                        <li><a href="styles.htm">Additional Styles</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Portfolios</a>
-                    <ul>
-                    	<li><a href="one-column.htm">One Column Portfolio</a></li>
-                        <li><a href="two-column.htm">Two Column Portfolio</a></li>
-                        <li><a href="three-column.htm">Three Column Portfolio</a></li>
-                        <li><a href="four-column.htm">Four Column Portfolio</a></li>
-                        <li><a href="gallery.htm">Gallery</a></li>
-                    </ul>
-                </li>
-                <li><a href="blog.htm">Blog</a>
-                    <ul class="last">
-                    	<li><a href="blog-post.htm">Blog Post</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.htm">Contact</a></li>
+              <%= render :partial => 'entries/option_bar' %>
             </ul>
         </div>
         <!-- Navigation End -->
 
         <div class="horizontal-rule"></div>
 
-
+            <%= render :partial => "base/flash",:object => flash %>
       <%= yield %>
 
 
@@ -75,14 +56,13 @@
         <!-- Footer Start -->
         <div id="footer-wrapper">
             <ul>
-            	<%= render :partial => 'option_bar' %>
+            	<%= render :partial => 'entries/option_bar' %>
             </ul>
-            <div id="footer-logo"></div>
             <div id="footer-copyright">Copyright 2011. All Rights Reserved</div>
         </div>
         <!-- Footer End -->
     </div>
     <script type="text/javascript"> Cufon.now(); </script>
-<script type="text/javascript">jQuery(document).ready(function($) { $("#twitter").tweet({username: "thestockfactor",}); });</script>
+<script type="text/javascript">jQuery(document).ready(function($) { $("#twitter").tweet({username: "thestockfactor",count:8}); });</script>
 </body>
 </html>

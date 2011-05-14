@@ -1,16 +1,22 @@
 <% title "Sources" %>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Factor</th>
-  </tr>
-  <% for source in @sources %>
+<div class="one-half-last">
+  <table style="width:100%; margin: 15px auto 0 auto">
     <tr>
-      <td><%=h source.name %></td>
-      <td><%=h source.weight.to_i %></td>
+      <th style="text-align:left;">Name</th>
+      <th>Factor</th>
     </tr>
-  <% end %>
-</table>
+    <% for source in @sources %>
+        <tr>
+          <td style="text-align:left;"><%= h source.name %></td>
+          <td><%= h source.weight.to_i %></td>
+        </tr>
+    <% end %>
+  </table>
 
-<p><a href="mailto:thestockfactor@gmail.com">suggest a source</a> </p>
+</div>
+
+
+<div class="one-half">
+    <div class="medium-text" style="padding: 8px;">Are we missing a source?  Please suggest one.</div>
+      <%= link_to 'Suggest','mailto:thestockfactor@gmail.com',{:class=>'large button',:style=>"float:left;margin:12px 0 0 12px;"} %>    </div>

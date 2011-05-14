@@ -4,15 +4,15 @@ function IncludeJavaScript(jsFile)
   document.write('<script type="text/javascript" src="'
     + jsFile + '"></scr' + 'ipt>'); 
 }
-IncludeJavaScript('js/jquery.droppy.js');
-IncludeJavaScript('js/slides.jquery.js');
-IncludeJavaScript('js/swfobject.js');
-IncludeJavaScript('js/jquery.slider.js');
-IncludeJavaScript('js/jquery.prettyPhoto.js');
-IncludeJavaScript('js/form.validation.js');
-IncludeJavaScript('js/Coolvetica.font.js');
-IncludeJavaScript('js/Amperzand.font.js');
-IncludeJavaScript('js/Avenir.font.js');
+IncludeJavaScript('/js/jquery.droppy.js');
+IncludeJavaScript('/js/slides.jquery.js');
+IncludeJavaScript('/js/swfobject.js');
+IncludeJavaScript('/js/jquery.slider.js');
+IncludeJavaScript('/js/jquery.prettyPhoto.js');
+IncludeJavaScript('/js/form.validation.js');
+IncludeJavaScript('/js/Coolvetica.font.js');
+IncludeJavaScript('/js/Amperzand.font.js');
+IncludeJavaScript('/js/Avenir.font.js');
 
 // Widget Hint Effect
 jQuery(document).ready(function($) {

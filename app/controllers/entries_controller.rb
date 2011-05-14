@@ -1,14 +1,30 @@
 require 'core'
+require 'util'
 
 class EntriesController < ApplicationController
   before_filter :is_admin,:only=>[:new,:create,:show,:edit,:list]
   include Core
+  include Util
 
   def index
 
     @title = "Stocks In Play"
 
-    @symbols = Factor.top
+    @symbols = []
+
+    (0..3).to_a.each do |i|
+
+      @symbols << {
+          :symbol=>Rails.cache.read("symbol_#{i}"),
+          :count => Rails.cache.read("count_#{i}"),
+          :source_count => Rails.cache.read("source_count_#{i}"),
+          :factor => Rails.cache.read("factor_#{i}")
+
+      }
+
+    end
+
+
 
     @recent_entries = Entry.all(:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
 
@@ -124,5 +140,12 @@ class EntriesController < ApplicationController
     @prices_json =   Rails.cache.read("prices_#{num}").to_json
     @min_price =  Rails.cache.read("min_price_#{num}")
     render :layout => false
+  end
+
+  def more_symbols
+
+    @title = "Stocks In Play"
+    @symbols = Factor.top
+    @recent_entries = Entry.all(:select=>"symbol,source_id,sent_at",:order=>"sent_at DESC",:limit=>45)
   end
 end

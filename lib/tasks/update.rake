@@ -50,9 +50,11 @@ namespace :update do
 
   task :cleanse_old => :environment do
     include Util
-    sql = "DELETE from quotes where market_time < '#{time_to_sql_timestamp(add_days(DateTime.now, -40))}'"
-    Rails.logger.info sql
-    Quote.connection.execute(sql)
+    ['quotes', 'entries', 'email_contents', 'factors'].each do |table_name|
+      sql = "DELETE from #{table_name} where created_at < '#{time_to_sql_timestamp(add_days(DateTime.now, -40))}'"
+      Rails.logger.info sql
+      Quote.connection.execute(sql)
+    end
   end
 
   task :cleanse_factors => :environment do
@@ -111,13 +113,16 @@ namespace :update do
 
   end
 
-  task :update_top_charts => :environment do
+  task :top_charts => :environment do
     include Util
     include Core
     i = 0
-    top_symbols = Factor.top[0..2]
+    top_symbols = Factor.top[0..3]
     top_symbols.to_a.each do |top_symbol|
       Rails.cache.write("symbol_#{i}",top_symbol[:symbol])
+      Rails.cache.write("factor_#{i}",top_symbol[:factor])
+      Rails.cache.write("count_#{i}",top_symbol[:count])
+      Rails.cache.write("source_count_#{i}",top_symbol[:source_count])
       factors,min_price,prices = Entry.get_quotes(top_symbol[:symbol],7)
       Rails.cache.write("factors_#{i}",factors)
       Rails.cache.write("prices_#{i}",prices)

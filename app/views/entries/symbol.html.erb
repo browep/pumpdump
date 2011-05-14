@@ -1,20 +1,24 @@
-<h1 style="display:inline;"><%= @symbol %></h1>
+<h1 style="display:inline; margin-top: 15px;" class="slogan-large"><%= @symbol %></h1>
+<div style="height: 60px;">
+  <span style="float:left" class="green"><a href="http://www.google.com/finance?q=<%= @symbol %>" target="_blank">on google finance</a></span>
 
-<a href="http://www.google.com/finance?q=<%= @symbol %>" target="_blank">on google finance</a>
-<span class="search-times"><% [1,7,14,30].each do |time| %>
+<span class="search-times">
+
+
+  <% [1,7,14,30].each do |time| %>
       <% if @search_time != time then %>
-          <span class="selected_time"><%= link_to "#{time.to_s} day" + (time > 1?"s":""),:search_time=>time %></span>
+          <span class="time-link"><%= link_to "#{time.to_s} day" + (time > 1?"s":""),:search_time=>time %></span>
        <% else %>
-          <span class="selected_time"><%= "#{time.to_s} days" %></span>
+          <span class="selected-time"><%= "#{time.to_s} days" %></span>
       <% end %>
 
-<% end %></span>
+<% end %></span></div>
 <br />
-<div id="placeholder" style="width:740px;height:300px;"></div>
+<div id="placeholder" style="width:900px;height:300px;"></div>
 <br />
 <br />
 
-<div class="sub-title">Mentions in newsletters</div>
+<div class="medium-text">Mentions in newsletters</div>
 <br/>
 <table class="mentions-list">
   <tr class="table-headers">

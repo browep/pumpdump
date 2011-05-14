@@ -39,16 +39,23 @@
             <% end %>
             <%= render :partial => 'featured_symbol',:object => @symbols[3] ,:locals => {:class_name=>'one-fourth-last',:index=>4}%>
 
-        <!-- Featured Work End -->
+                    <!-- Featured Work End -->
 
 
-        <div class="horizontal-rule"></div>
-            <div class="one-half">
-              <p class="larger-text"><span class="large-text green strong">Newsletters</span><br/>
-                We create the stock factor from many different sources. 
-              </p>
-              <%= link_to 'View',{:action=>:index,:controller => :sources},{:class=>'large button'} %>
-            </div>
+            <div class="horizontal-rule"></div>
+            <div class="one-half"><% form_for @subscriber do |f| %>
+
+                <p class="medium-text">
+                  <span class="large-text green strong">Subscribe</span><br/>
+                    Want to be alerted when the stock with the highest factor changes? Enter your email below and we will send you an email each time the top ones change. (Oh yeah, and we promise not to spam you or sell your email address.)
+                </p>
+                  <p style="padding-top:6px;"><span class="emphed" >Email Address: </span><br />
+                  <span class="subscriber-input">
+                  <%= f.text_field :address, :id=>"tb",:style=>'height: 28px;width: 370px;font-size: 22px;' %>
+
+                  <%= f.submit "Subscribe",{:class=>'small button',:style=>'float: none;'} %>
+                </span></p>
+            <% end %></div>
             <div class="one-half-last">
               <p class="larger-text"><span class="large-text green strong">More Symbols</span><br/>
                 See the top 40 symbols and who is pumping them.
@@ -57,12 +64,7 @@
             </div>
 
         <div class="horizontal-rule"></div>
-
-<div class="one-third">
-  <p class="larger-text green"><%= link_to 'Twitter','http://twitter.com/thestockfactor' %></p>
-  <div id="twitter"></div>
-</div>
-<div class="two-third-last">
+<div class="one-half">
   <p class="larger-text green"><%= link_to 'Recent Entries',:action => 'more_symbols'%></p>
 
   <% for entry in @recent_entries[0..15] %>
@@ -74,3 +76,8 @@
   <% end %>
 </div>
 
+
+<div class="one-half-last">
+  <p class="larger-text green"><%= link_to 'Twitter','http://twitter.com/thestockfactor' %></p>
+  <div id="twitter"></div>
+</div>

@@ -1,0 +1,32 @@
+<div class="one-half">
+  <span class="slogan-large">Symbols</span><span>(click a symbol to see it's chart)</span>
+  <table>
+    <tr><th></th><th>Factor</th><th>Mentions</th><th>Sources</th></tr>
+    <% @symbols.each do |symbol_container| %>
+        <tr>
+
+          <td class="medium-text green"><%= link_to symbol_container[:symbol],{:action => :symbol,:id=>symbol_container[:symbol]},{:class=>'green emphed'} %></td>
+          <td class="medium-text">
+            <%= symbol_container[:factor] %>
+          </td>
+          <td class="medium-text">
+            <%= symbol_container[:count] %>
+          </td>
+          <td class="medium-text">
+            <%= symbol_container[:source_count] %>
+          </td>
+        </tr>
+
+    <% end %>
+  </table>
+</div>
+<div class="one-half-last">
+  <h2>Recent Mentions</h2>
+  <% for entry in @recent_entries[0..60] %>
+
+      <p><%= "#{entry.source.name} (#{entry.source.weight.to_i})" %>
+        -> <%= link_to entry.symbol, {:action=>"symbol", :id=>entry.symbol},{:class=>'green'} %><span class="small-text grey">
+        (<%= format_datetime(entry.sent_at) %>)</span> </p>
+
+  <% end %>
+</div>

@@ -6,7 +6,9 @@ class Entry < ActiveRecord::Base
   attr_accessible :symbol,:sent_at,:guid,:url,:message_type,:action,:body,:content
 
 
-  include Util
+  extend Util
+  extend Core
+  
   def sent_at_with_zone
     if self.message_type == type_twitter
       add_hours(self.sent_at, 1)
@@ -76,15 +78,9 @@ class Entry < ActiveRecord::Base
   end
 
   def self.get_quotes(symbol, search_time)
+    include Util
     prices = Quote.find_all_by_symbol(symbol, :select=>"market_time,last_price", :order=>"market_time", :conditions=>
         ["market_time > ?", DateTime.now - search_time])
-
-
-    # get the earliest price, we need to make sure we get a factor at that time to fill out the graph
-    earliest_graph_item = nil
-    if !prices.nil? && prices.size > 0
-      earliest_graph_item = prices[0].market_time_with_zone
-    end
 
     prices_arr = Array.new
     min_price = nil
@@ -101,23 +97,7 @@ class Entry < ActiveRecord::Base
       min_price = min_price * 0.98
     end
 
-    prices_json = prices_arr.to_json
-    logger.debug "prices_json:#{prices_json.to_s}"
-
     factors = []
-    # new stock factor line
-    # do one for every day, plus the earliest entry or quote
-    factor_times = []
-    times_for_factors = (0..search_time).to_a
-#    factor_times << earliest_graph_item
-    times_for_factors.reverse_each { |days_ago| factor_times << add_hours(Time.now, -24 * days_ago) }
-
-    # do a factor for each
-    factor_times.each do |time|
-      _factor = do_factor(symbol, add_hours(time, -4))
-      factors << [add_hours(time, -8).to_f.to_i*1000, _factor]
-    end
-
     # mixin all factors found in the db
     # only get ones that are at least newer than the oldest factor we just computed
     earliest_factor_time = add_hours(Time.now, -24 * search_time)
@@ -128,7 +108,7 @@ class Entry < ActiveRecord::Base
 
     factors.sort! { |a, b| a[0]<=>b[0] }
 
-    return factors,min_price,prices
+    return factors,min_price,prices_arr
 
   end
 
