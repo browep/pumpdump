@@ -9,6 +9,24 @@ require 'update'
 require 'update_quote'
 require 'core'
 
+def top_charts
+  include Util
+  include Core
+  i = 0
+  top_symbols = Factor.top[0..3]
+  top_symbols.to_a.each do |top_symbol|
+    Rails.cache.write("symbol_#{i}", top_symbol[:symbol])
+    Rails.cache.write("factor_#{i}", top_symbol[:factor])
+    Rails.cache.write("count_#{i}", top_symbol[:count])
+    Rails.cache.write("source_count_#{i}", top_symbol[:source_count])
+    factors, min_price, prices = Entry.get_quotes(top_symbol[:symbol], 7)
+    Rails.cache.write("factors_#{i}", factors)
+    Rails.cache.write("prices_#{i}", prices)
+    Rails.cache.write("min_price_#{i}", min_price)
+    i+=1
+  end
+end
+
 namespace :update do
 
 
@@ -46,6 +64,7 @@ namespace :update do
   task :factor => :environment do
     include Core
     update_all_factors
+    top_charts()
   end
 
   task :cleanse_old => :environment do
@@ -114,24 +133,7 @@ namespace :update do
   end
 
   task :top_charts => :environment do
-    include Util
-    include Core
-    i = 0
-    top_symbols = Factor.top[0..3]
-    top_symbols.to_a.each do |top_symbol|
-      Rails.cache.write("symbol_#{i}",top_symbol[:symbol])
-      Rails.cache.write("factor_#{i}",top_symbol[:factor])
-      Rails.cache.write("count_#{i}",top_symbol[:count])
-      Rails.cache.write("source_count_#{i}",top_symbol[:source_count])
-      factors,min_price,prices = Entry.get_quotes(top_symbol[:symbol],7)
-      Rails.cache.write("factors_#{i}",factors)
-      Rails.cache.write("prices_#{i}",prices)
-      Rails.cache.write("min_price_#{i}",min_price)
-      i+=1
-    end
-
-
-
+    top_charts()
   end
 
 
